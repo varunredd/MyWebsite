@@ -1,0 +1,473 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto; /* allow normal scrolling */
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar cross-browser */
+body {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+main {
+  min-height: 100%;
+  overflow: visible;
+}
+
+@layer base {
+  :root {
+    /* Cyberpunk Dark Theme */
+    --background: 220 13% 5%;
+    --background-secondary: 220 13% 8%;
+    --background-tertiary: 220 13% 12%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 13% 8%;
+    --card-foreground: 210 40% 98%;
+    --card-border: 220 13% 15%;
+
+    --popover: 220 13% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Neon Accent Colors */
+    --primary: 180 100% 50%; /* Cyan neon */
+    --primary-foreground: 220 13% 5%;
+    --primary-glow: 180 100% 70%;
+
+    --secondary: 280 100% 70%; /* Purple neon */
+    --secondary-foreground: 210 40% 98%;
+    --secondary-glow: 280 100% 85%;
+
+    --success: 120 100% 50%; /* Green neon */
+    --success-foreground: 220 13% 5%;
+    --success-glow: 120 100% 70%;
+
+    --warning: 45 100% 60%; /* Gold */
+    --warning-foreground: 220 13% 5%;
+
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 55%;
+
+    --accent: 220 13% 12%;
+    --accent-foreground: 180 100% 50%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 13% 15%;
+    --input: 220 13% 12%;
+    --input-border: 220 13% 20%;
+    --ring: 180 100% 50%;
+
+    /* --- CTA triad (high contrast on deep gray) --- */
+    --cta-cyan: 185 100% 55%; /* plasma cyan   */
+    --cta-cyan-glow: 185 100% 70%;
+    --cta-violet: 275 95% 70%; /* hyper violet  */
+    --cta-violet-glow: 275 95% 85%;
+    --cta-lime: 95 95% 60%; /* ion lime      */
+    --cta-lime-glow: 95 95% 75%;
+
+    /* Game UI Colors */
+    --xp-bar: 120 100% 50%;
+    --health-bar: 0 100% 60%;
+    --mana-bar: 240 100% 60%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(180 100% 50%),
+      hsl(180 100% 70%)
+    );
+    --gradient-secondary: linear-gradient(
+      135deg,
+      hsl(280 100% 70%),
+      hsl(280 100% 85%)
+    );
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(220 13% 5%) 0%,
+      hsl(220 13% 8%) 50%,
+      hsl(220 13% 12%) 100%
+    );
+    --gradient-card: linear-gradient(145deg, hsl(220 13% 8%), hsl(220 13% 12%));
+
+    /* Shadows & Glows */
+    --shadow-neon-cyan: 0 0 20px hsl(180 100% 50% / 0.3);
+    --shadow-neon-purple: 0 0 20px hsl(280 100% 70% / 0.3);
+    --shadow-neon-green: 0 0 20px hsl(120 100% 50% / 0.3);
+    --shadow-card: 0 10px 40px hsl(220 13% 0% / 0.5);
+    --shadow-intense: 0 20px 60px hsl(220 13% 0% / 0.8);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+/* Section Title Styling */
+.section-title {
+  font-weight: bold;
+  text-align: center;
+  color: #00f5ff;
+  text-shadow: 0 0 10px rgba(0, 245, 255, 0.5), 0 0 20px rgba(0, 245, 255, 0.3);
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.section-title:focus {
+  outline: 2px solid #00f5ff;
+  outline-offset: 4px;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+    overflow-x: hidden;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Game UI Components */
+  .neon-glow-cyan {
+    box-shadow: var(--shadow-neon-cyan);
+    border: 1px solid hsl(var(--primary));
+  }
+
+  .neon-glow-purple {
+    box-shadow: var(--shadow-neon-purple);
+    border: 1px solid hsl(var(--secondary));
+  }
+
+  .neon-glow-green {
+    box-shadow: var(--shadow-neon-green);
+    border: 1px solid hsl(var(--success));
+  }
+
+  .gradient-text-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-secondary {
+    background: var(--gradient-secondary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-game {
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid hsl(var(--card-border));
+    backdrop-filter: blur(8px);
+  }
+
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+
+  .text-shadow-glow {
+    text-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+  }
+
+  /* Animations */
+  .pulse-neon {
+    animation: pulse-neon 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse-neon {
+    from {
+      box-shadow: 0 0 5px hsl(var(--primary) / 0.5);
+    }
+    to {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.8),
+        0 0 30px hsl(var(--primary) / 0.4);
+    }
+  }
+
+  .float-animation {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Typography */
+  .text-fluid-xl {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .text-fluid-lg {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .text-fluid-md {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  /* ---------- CTA base (glass) ---------- */
+  .btn-cta {
+    @apply relative inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl font-semibold transition-all duration-200 backdrop-blur;
+    border: 1px solid hsl(var(--card-border));
+    background: linear-gradient(
+      180deg,
+      hsl(220 13% 12% / 0.35),
+      hsl(220 13% 8% / 0.35)
+    );
+    color: hsl(var(--foreground));
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  /* ---------- Variant variables (only responsibility: set color) ---------- */
+  .btn-cyan {
+    --liquid: hsl(var(--cta-cyan));
+    --liquid-glow: hsl(var(--cta-cyan-glow));
+  }
+  .btn-violet {
+    --liquid: hsl(var(--cta-violet));
+    --liquid-glow: hsl(var(--cta-violet-glow));
+  }
+  .btn-lime {
+    --liquid: hsl(var(--cta-lime));
+    --liquid-glow: hsl(var(--cta-lime-glow));
+  }
+
+  /* ---------- Shared chroma styling (uses --liquid) ---------- */
+  .btn-cta.btn-cyan,
+  .btn-cta.btn-violet,
+  .btn-cta.btn-lime {
+    border-color: color-mix(in oklab, var(--liquid) 45%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--liquid) 35%, transparent),
+      0 8px 26px color-mix(in oklab, var(--liquid) 15%, transparent),
+      0 6px 22px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+  .btn-cta.btn-cyan:hover,
+  .btn-cta.btn-violet:hover,
+  .btn-cta.btn-lime:hover {
+    transform: translateY(-1px);
+    background: color-mix(in oklab, var(--liquid) 10%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--liquid) 60%, transparent),
+      0 0 22px color-mix(in oklab, var(--liquid-glow) 25%, transparent),
+      0 10px 28px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Focus ring picks current variant; falls back to cyan if no variant present */
+  .btn-cta:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(220 13% 5%),
+      0 0 0 4px
+        color-mix(
+          in oklab,
+          var(--liquid, hsl(var(--cta-cyan))) 45%,
+          transparent
+        );
+  }
+
+  /* ---------- Optional tiny ripple ---------- */
+  .btn-cta .r {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .btn-cta .r::before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    opacity: 0;
+    background: radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.35),
+      rgba(255, 255, 255, 0.1) 60%,
+      transparent 70%
+    );
+    transform: translate(-50%, -50%) scale(0);
+  }
+  .btn-cta.rippling .r::before {
+    animation: cta-ripple 0.55s ease-out forwards;
+  }
+  @keyframes cta-ripple {
+    0% {
+      opacity: 0.45;
+      transform: translate(var(--x), var(--y)) scale(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--x), var(--y)) scale(18);
+    }
+  }
+
+  /* ---------- Liquid / Gooey ---------- */
+  .btn-liquid {
+    overflow: hidden;
+  }
+  .btn-liquid .goo-wrap {
+    position: absolute;
+    inset: -10% -10%;
+    filter: url(#goo);
+    pointer-events: none;
+  }
+
+  /* blobs now read variant color */
+  .btn-liquid .blob {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 30% 30%,
+      color-mix(in oklab, var(--liquid-glow) 35%, transparent),
+      color-mix(in oklab, var(--liquid) 18%, transparent) 40%,
+      transparent 70%
+    );
+    opacity: 0.7;
+    mix-blend-mode: screen;
+  }
+
+  @keyframes blob-x {
+    0% {
+      transform: translateX(-12%);
+    }
+    50% {
+      transform: translateX(12%);
+    }
+    100% {
+      transform: translateX(-12%);
+    }
+  }
+  @keyframes blob-y {
+    0% {
+      transform: translateY(-10%);
+    }
+    50% {
+      transform: translateY(10%);
+    }
+    100% {
+      transform: translateY(-10%);
+    }
+  }
+
+  .btn-liquid .b1 {
+    left: -10%;
+    top: -20%;
+    animation: blob-x 7s ease-in-out infinite, blob-y 9s ease-in-out infinite;
+  }
+  .btn-liquid .b2 {
+    right: -15%;
+    top: -10%;
+    animation: blob-x 8.5s ease-in-out infinite reverse,
+      blob-y 11s ease-in-out infinite;
+  }
+  .btn-liquid .b3 {
+    left: 30%;
+    bottom: -25%;
+    animation: blob-x 10s ease-in-out infinite,
+      blob-y 12s ease-in-out infinite reverse;
+  }
+
+  .btn-liquid:hover .blob {
+    opacity: 0.9;
+  }
+
+  /* Translucent section surfaces (so video peeks through) */
+  .surface {
+    background: hsl(var(--background) / 0.85); /* 85% opaque */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .surface-strong {
+    background: hsl(
+      var(--background) / 0.92
+    ); /* thicker for long text blocks */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* Optional variant: add a super subtle separator only when needed */
+  .surface-lined {
+    box-shadow: inset 0 1px 0 hsl(var(--card-border) / 0.5),
+      inset 0 -1px 0 hsl(var(--card-border) / 0.5);
+  }
+  /* card variant if you want translucent panels below */
+  .card-surface {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--background-secondary) / 0.7),
+      hsl(var(--background-tertiary) / 0.7)
+    );
+    border: 1px solid hsl(var(--card-border) / 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  video {
+    animation: none !important;
+  }
+}
+
+/* Mobile: avoid heavy video rendering (we already hide the fixed video on md-) */
+@media (max-width: 767px) {
+  .surface,
+  .surface-strong {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: hsl(
+      var(--background) / 0.95
+    ); /* slightly more solid on phones */
+  }
+}

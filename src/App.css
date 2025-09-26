@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .card-game {
+    @apply bg-card text-card-foreground border border-card-border rounded-xl shadow-sm;
+  }
+  .bg-card-hover {
+    /* subtle hover using the current card color */
+    background-color: color-mix(in oklab, hsl(var(--card)), white 6%);
+  }
+}
+
+@layer base {
+  /* LIGHT THEME (default) */
+  :root {
+    /* surfaces & text */
+    --background: 0 0% 100%;
+    --background-secondary: 210 20% 98%;
+    --background-tertiary: 210 18% 96%;
+    --foreground: 222.2 84% 4.9%;
+
+    /* borders / inputs / rings */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --input-border: 214.3 31.8% 86%;
+    --card-border: 214.3 31.8% 91.4%;
+    --ring: var(--primary);
+
+    /* card & popover */
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* primary/accent: JS overwrites these; safe defaults */
+    --primary: 191 100% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 191 100% 60%;
+
+    --secondary: 262 83% 58%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 262 83% 66%;
+
+    --success: 142 71% 40%;
+    --success-foreground: 0 0% 100%;
+    --success-glow: 142 71% 50%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 7%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --muted: 210 16% 96%;
+    --muted-foreground: 215 20% 25%;
+
+    /* accent mirrors primary unless JS overrides */
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
+
+    /* game bars */
+    --xp-bar: 262 83% 58%;
+    --health-bar: 0 72% 56%;
+    --mana-bar: 217 91% 60%;
+
+    /* radius */
+    --radius: 0.75rem;
+  }
+
+  /* DARK THEME (overrides) */
+  .dark {
+    --background: 222 14% 8%;
+    --background-secondary: 222 14% 10%;
+    --background-tertiary: 222 14% 12%;
+    --foreground: 210 40% 98%;
+
+    --border: 222 14% 18%;
+    --input: 222 14% 18%;
+    --input-border: 222 14% 22%;
+    --card-border: 222 14% 18%;
+    --ring: var(--primary);
+
+    --card: 222 14% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 14% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    /* primary/accent (JS will still override hue from your picker) */
+    --primary: 191 100% 50%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --primary-glow: 191 100% 60%;
+
+    --secondary: 262 83% 58%;
+    --secondary-foreground: 210 40% 98%;
+    --secondary-glow: 262 83% 66%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --success-glow: 142 71% 52%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 7%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --muted: 222 14% 14%;
+    --muted-foreground: 215 16% 75%;
+
+    --accent: var(--primary);
+    --accent-foreground: var(--primary-foreground);
+
+    --xp-bar: 262 83% 58%;
+    --health-bar: 0 72% 56%;
+    --mana-bar: 217 91% 60%;
+  }
+
+  /* your helpers */
+  .gradient-text-primary {
+    background-image: linear-gradient(
+      90deg,
+      hsl(var(--primary)),
+      color-mix(in oklab, hsl(var(--primary)), white 24%)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .neon-glow-accent {
+    box-shadow: 0 0 18px hsl(var(--primary) / 0.55),
+      0 0 40px hsl(var(--primary) / 0.35);
+  }
+}

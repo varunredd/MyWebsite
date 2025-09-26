@@ -1,0 +1,304 @@
+---
+title: "From React to Production with Docker and NGINX"
+excerpt: "Complete guide to containerizing React applications with Docker and serving them efficiently with NGINX in production environments."
+date: "2025-08-10"
+readingTime: "7 min"
+tags: ["Frontend", "DevOps", "Docker"]
+difficulty: "Novice"
+xpReward: 100
+coverImage: "/images/covers/react-docker-nginx.png"
+repoUrl: "https://github.com/varunreddy/react-docker-nginx"
+demoUrl: "https://react-app-demo.varunreddy.dev"
+seo:
+  metaTitle: "Deploy React Apps with Docker and NGINX - Production Guide"
+  metaDescription: "Learn to containerize React applications with multi-stage Docker builds and serve them with NGINX for optimal production performance."
+---
+
+# From React to Production with Docker and NGINX
+
+Deploying React applications to production requires more than just running `npm run build`. In this guide, we'll create a robust deployment pipeline using Docker and NGINX that's ready for real-world traffic.
+
+## Why Docker + NGINX?
+
+- **Consistency**: Same environment from development to production
+- **Performance**: NGINX efficiently serves static files
+- **Scalability**: Easy to replicate and scale containers
+- **Security**: Minimal attack surface with distroless images
+
+## Multi-Stage Docker Build
+
+Let's start with an efficient Dockerfile that builds and serves our React app:
+
+```dockerfile
+# Build stage
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copy source code and build
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM nginx:alpine
+
+# Copy custom NGINX config
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy built React app
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Add non-root user for security
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+# Change ownership
+RUN chown -R nextjs:nodejs /usr/share/nginx/html
+RUN chown -R nextjs:nodejs /var/cache/nginx
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+## NGINX Configuration
+
+Create a production-ready NGINX config (`nginx.conf`):
+
+```nginx
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # Logging
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                   '$status $body_bytes_sent "$http_referer" '
+                   '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log /var/log/nginx/access.log main;
+
+    # Performance
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/json
+        application/javascript
+        application/xml+rss
+        application/atom+xml
+        image/svg+xml;
+
+    server {
+        listen 80;
+        server_name localhost;
+        root /usr/share/nginx/html;
+        index index.html;
+
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer-when-downgrade" always;
+        add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+
+        # Cache static assets
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+
+        # Handle React Router
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+
+        # Health check
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+    }
+}
+```
+
+## Build and Run
+
+Create these npm scripts in your `package.json`:
+
+```json
+{
+  "scripts": {
+    "docker:build": "docker build -t my-react-app .",
+    "docker:run": "docker run -p 3000:80 my-react-app",
+    "docker:prod": "docker run -d --name react-prod -p 80:80 my-react-app"
+  }
+}
+```
+
+Build and run your containerized app:
+
+```bash
+# Build the Docker image
+npm run docker:build
+
+# Run for development testing
+npm run docker:run
+
+# Run in production mode
+npm run docker:prod
+```
+
+## Docker Compose for Development
+
+For local development with additional services:
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  react-app:
+    build: .
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+  api:
+    image: my-api:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/mydb
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+## Optimization Tips
+
+### 1. Reduce Bundle Size
+
+```javascript
+// Use dynamic imports for code splitting
+const LazyComponent = React.lazy(() => import('./LazyComponent'));
+
+// Analyze bundle size
+npm install --save-dev webpack-bundle-analyzer
+```
+
+### 2. Environment Variables
+
+```dockerfile
+# In your Dockerfile
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+```
+
+### 3. Health Checks
+
+Add health checks to your Dockerfile:
+
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost/health || exit 1
+```
+
+## Production Deployment
+
+### Using Docker Swarm
+
+```bash
+# Initialize swarm
+docker swarm init
+
+# Deploy stack
+docker stack deploy -c docker-compose.prod.yml react-app
+```
+
+### Using Kubernetes
+
+```yaml
+# k8s-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: react-app
+  template:
+    metadata:
+      labels:
+        app: react-app
+    spec:
+      containers:
+      - name: react-app
+        image: my-react-app:latest
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+```
+
+## Monitoring and Logging
+
+Add logging and monitoring to your setup:
+
+```nginx
+# Add to nginx.conf
+location /metrics {
+    stub_status on;
+    access_log off;
+    allow 127.0.0.1;
+    deny all;
+}
+```
+
+## Key Takeaways
+
+- Use multi-stage Docker builds to minimize image size
+- Configure NGINX for optimal static file serving
+- Implement proper caching strategies
+- Add security headers for production
+- Use health checks for container orchestration
+- Monitor your application in production
+
+This setup provides a solid foundation for deploying React applications at scale while maintaining security and performance best practices.

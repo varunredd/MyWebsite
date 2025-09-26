@@ -1,0 +1,1 @@
+export { NewSettings as Settings } from './NewSettings';

@@ -1,0 +1,62 @@
+{
+  "nodes": [
+    { "id": "Skill Tree", "type": "root", "x": 0, "y": 0 },
+
+    { "id": "Frontend", "type": "domain", "x": -200, "y": -150 },
+    { "id": "Backend", "type": "domain", "x": 200, "y": -150 },
+    { "id": "AI/ML", "type": "domain", "x": -200, "y": 150 },
+    { "id": "Cloud & DevOps", "type": "domain", "x": 200, "y": 150 },
+    { "id": "Data", "type": "domain", "x": 0, "y": 200 },
+
+    { "id": "React", "type": "skill", "level": 90, "tags": ["frontend"], "x": -300, "y": -250, "description": "Advanced React development with hooks, context, and performance optimization", "projects": ["Portfolio", "E-commerce Platform", "Task Manager"] },
+    { "id": "TypeScript", "type": "skill", "level": 85, "tags": ["frontend"], "x": -100, "y": -250, "description": "Strong typing for scalable JavaScript applications", "projects": ["Portfolio", "API Client", "Component Library"] },
+    { "id": "Tailwind", "type": "skill", "level": 80, "tags": ["frontend"], "x": -200, "y": -300, "description": "Utility-first CSS framework for rapid UI development", "projects": ["Portfolio", "Dashboard", "Mobile App"] },
+
+    { "id": "Java", "type": "skill", "level": 90, "tags": ["backend"], "x": 300, "y": -250, "description": "Enterprise Java development with Spring ecosystem", "projects": ["Microservices API", "Banking System", "E-commerce Backend"] },
+    { "id": "Spring Boot", "type": "skill", "level": 88, "tags": ["backend"], "x": 100, "y": -250, "description": "Rapid development of production-ready applications", "projects": ["REST API", "Authentication Service", "Payment Gateway"] },
+    { "id": "Node.js", "type": "skill", "level": 82, "tags": ["backend"], "x": 200, "y": -300, "description": "Server-side JavaScript for scalable network applications", "projects": ["Real-time Chat", "File Upload Service", "GraphQL API"] },
+    { "id": "gRPC", "type": "skill", "level": 70, "tags": ["backend"], "x": 250, "y": -200, "description": "High-performance RPC framework for microservices", "projects": ["Service Mesh", "Data Pipeline", "Mobile Backend"] },
+
+    { "id": "Python", "type": "skill", "level": 85, "tags": ["aiml"], "x": -300, "y": 250, "description": "Versatile programming for AI, data science, and automation", "projects": ["ML Pipeline", "Data Analysis", "Automation Scripts"] },
+    { "id": "TensorFlow", "type": "skill", "level": 75, "tags": ["aiml"], "x": -100, "y": 250, "description": "Deep learning framework for complex AI models", "projects": ["Image Classification", "NLP Model", "Recommendation System"] },
+    { "id": "FastAPI", "type": "skill", "level": 78, "tags": ["aiml","backend"], "x": -200, "y": 300, "description": "Modern Python web framework for APIs with automatic docs", "projects": ["ML API", "Data Service", "Analytics Backend"] },
+
+    { "id": "AWS", "type": "skill", "level": 80, "tags": ["devops"], "x": 300, "y": 250, "description": "Cloud computing services for scalable applications", "projects": ["Serverless App", "Container Deployment", "Data Lake"] },
+    { "id": "Docker", "type": "skill", "level": 85, "tags": ["devops"], "x": 100, "y": 250, "description": "Containerization for consistent deployment environments", "projects": ["Microservices", "CI/CD Pipeline", "Development Environment"] },
+    { "id": "Kubernetes", "type": "skill", "level": 70, "tags": ["devops"], "x": 200, "y": 300, "description": "Container orchestration for production deployments", "projects": ["Auto-scaling Service", "Multi-tenant Platform", "Monitoring Stack"] },
+    { "id": "GitHub Actions", "type": "skill", "level": 76, "tags": ["devops"], "x": 250, "y": 200, "description": "CI/CD automation and workflow management", "projects": ["Automated Testing", "Deployment Pipeline", "Code Quality Checks"] },
+
+    { "id": "PostgreSQL", "type": "skill", "level": 82, "tags": ["data"], "x": -100, "y": 350, "description": "Advanced relational database with JSON support", "projects": ["E-commerce DB", "Analytics Platform", "User Management"] },
+    { "id": "MongoDB", "type": "skill", "level": 78, "tags": ["data"], "x": 100, "y": 350, "description": "NoSQL document database for flexible data models", "projects": ["Content Management", "Social Platform", "IoT Data Store"] },
+    { "id": "Redis", "type": "skill", "level": 72, "tags": ["data"], "x": 0, "y": 400, "description": "In-memory data structure store for caching and sessions", "projects": ["Session Store", "Real-time Leaderboard", "Cache Layer"] }
+  ],
+  "links": [
+    { "source": "Skill Tree", "target": "Frontend" },
+    { "source": "Skill Tree", "target": "Backend" },
+    { "source": "Skill Tree", "target": "AI/ML" },
+    { "source": "Skill Tree", "target": "Cloud & DevOps" },
+    { "source": "Skill Tree", "target": "Data" },
+
+    { "source": "Frontend", "target": "React" },
+    { "source": "Frontend", "target": "TypeScript" },
+    { "source": "Frontend", "target": "Tailwind" },
+
+    { "source": "Backend", "target": "Java" },
+    { "source": "Backend", "target": "Spring Boot" },
+    { "source": "Backend", "target": "Node.js" },
+    { "source": "Backend", "target": "gRPC" },
+
+    { "source": "AI/ML", "target": "Python" },
+    { "source": "AI/ML", "target": "TensorFlow" },
+    { "source": "AI/ML", "target": "FastAPI" },
+
+    { "source": "Cloud & DevOps", "target": "AWS" },
+    { "source": "Cloud & DevOps", "target": "Docker" },
+    { "source": "Cloud & DevOps", "target": "Kubernetes" },
+    { "source": "Cloud & DevOps", "target": "GitHub Actions" },
+
+    { "source": "Data", "target": "PostgreSQL" },
+    { "source": "Data", "target": "MongoDB" },
+    { "source": "Data", "target": "Redis" }
+  ]
+}

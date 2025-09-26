@@ -1,0 +1,201 @@
+---
+title: "Building Scalable APIs with Spring Boot"
+excerpt: "Learn how to create production-ready REST APIs with Spring Boot, including pagination, JWT authentication, and performance optimization techniques."
+date: "2025-08-15"
+readingTime: "8 min"
+tags: ["Backend", "Java", "APIs"]
+difficulty: "Adept"
+xpReward: 150
+coverImage: "/images/covers/spring-boot-api.png"
+repoUrl: "https://github.com/varunreddy/spring-boot-api-example"
+demoUrl: "https://api-demo.varunreddy.dev"
+seo:
+  metaTitle: "Building Scalable APIs with Spring Boot - Complete Guide"
+  metaDescription: "Master Spring Boot API development with pagination, JWT auth, and performance optimization. Includes production-ready code examples."
+---
+
+# Building Scalable APIs with Spring Boot
+
+Spring Boot has revolutionized Java web development by providing a convention-over-configuration approach that lets developers build production-ready applications quickly. In this guide, we'll explore how to create scalable REST APIs that can handle real-world traffic.
+
+## Project Setup
+
+First, let's set up a new Spring Boot project with the necessary dependencies:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt</artifactId>
+        <version>0.9.1</version>
+    </dependency>
+</dependencies>
+```
+
+## Creating RESTful Controllers
+
+Here's how to structure your controllers for maximum maintainability:
+
+```java
+@RestController
+@RequestMapping("/api/v1/users")
+@Validated
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<UserDTO>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+        
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<UserDTO> users = userService.findAll(pageable);
+        
+        return ResponseEntity.ok(users);
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserRequest request) {
+        UserDTO user = userService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+}
+```
+
+## Implementing JWT Authentication
+
+Security is crucial for production APIs. Here's a robust JWT implementation:
+
+```java
+@Component
+public class JwtTokenProvider {
+
+    @Value("${app.jwt.secret}")
+    private String jwtSecret;
+
+    @Value("${app.jwt.expiration}")
+    private int jwtExpirationInMs;
+
+    public String generateToken(Authentication authentication) {
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        Date expiryDate = new Date(Date.now() + jwtExpirationInMs);
+
+        return Jwts.builder()
+                .setSubject(Long.toString(userPrincipal.getId()))
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
+    public Long getUserIdFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return Long.parseLong(claims.getSubject());
+    }
+}
+```
+
+## Database Optimization
+
+Efficient database queries are essential for scalable APIs:
+
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findByEmail(@Param("email") String email);
+
+    @Query(value = "SELECT * FROM users WHERE created_at >= :date ORDER BY created_at DESC",
+           countQuery = "SELECT count(*) FROM users WHERE created_at >= :date",
+           nativeQuery = true)
+    Page<User> findRecentUsers(@Param("date") LocalDateTime date, Pageable pageable);
+}
+```
+
+## Error Handling
+
+Implement global exception handling for consistent error responses:
+
+```java
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(ValidationException ex) {
+        ErrorResponse error = new ErrorResponse("VALIDATION_ERROR", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse("NOT_FOUND", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+}
+```
+
+## Performance Tips
+
+1. **Use caching wisely**: Implement Redis for frequently accessed data
+2. **Database connection pooling**: Configure HikariCP properly
+3. **Async processing**: Use `@Async` for non-blocking operations
+4. **API rate limiting**: Implement bucket4j for request throttling
+
+## Testing Your API
+
+Always include comprehensive tests:
+
+```java
+@SpringBootTest
+@AutoConfigureTestDatabase
+class UserControllerTest {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Test
+    void shouldCreateUser() {
+        CreateUserRequest request = new CreateUserRequest("test@example.com", "John Doe");
+        
+        ResponseEntity<UserDTO> response = restTemplate.postForEntity(
+            "/api/v1/users", request, UserDTO.class);
+        
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody().getEmail()).isEqualTo("test@example.com");
+    }
+}
+```
+
+## Key Takeaways
+
+- Follow RESTful conventions for intuitive APIs
+- Implement proper authentication and authorization
+- Use pagination for large datasets
+- Handle errors gracefully with global exception handlers
+- Write comprehensive tests for all endpoints
+- Monitor performance and optimize database queries
+
+Building scalable APIs with Spring Boot requires attention to these fundamentals, but the framework's extensive ecosystem makes it achievable for developers at any level.

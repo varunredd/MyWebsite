@@ -1,0 +1,515 @@
+---
+title: "Practical ML Pipelines with FastAPI and TensorFlow"
+excerpt: "Build production-ready machine learning APIs with FastAPI and TensorFlow, including model serving, batch processing, and performance optimization."
+date: "2025-08-05"
+readingTime: "10 min"
+tags: ["AI/ML", "Python", "FastAPI"]
+difficulty: "Master"
+xpReward: 200
+coverImage: "/images/covers/ml-fastapi-tensorflow.png"
+repoUrl: "https://github.com/varunreddy/ml-fastapi-tensorflow"
+demoUrl: "https://ml-api-demo.varunreddy.dev"
+seo:
+  metaTitle: "ML Pipelines with FastAPI and TensorFlow - Production Guide"
+  metaDescription: "Learn to build scalable machine learning APIs with FastAPI and TensorFlow. Includes model serving, batch processing, and optimization techniques."
+---
+
+# Practical ML Pipelines with FastAPI and TensorFlow
+
+Building production-ready machine learning systems requires more than just training models. You need robust APIs, efficient serving infrastructure, and proper monitoring. In this guide, we'll build a complete ML pipeline using FastAPI and TensorFlow.
+
+## Project Architecture
+
+Our ML pipeline will include:
+- **Model Training**: TensorFlow model with preprocessing
+- **API Layer**: FastAPI for serving predictions
+- **Batch Processing**: Async processing for large datasets
+- **Monitoring**: Performance metrics and logging
+
+## Setting Up the Environment
+
+Start with a solid dependency setup:
+
+```python
+# requirements.txt
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+tensorflow==2.15.0
+pydantic==2.5.0
+numpy==1.24.3
+pandas==2.1.4
+scikit-learn==1.3.2
+redis==5.0.1
+celery==5.3.4
+prometheus-client==0.19.0
+```
+
+## Model Development
+
+Let's create a text classification model for sentiment analysis:
+
+```python
+# models/sentiment_classifier.py
+import tensorflow as tf
+from tensorflow.keras import layers
+import pickle
+import numpy as np
+
+class SentimentClassifier:
+    def __init__(self, vocab_size=10000, max_length=100):
+        self.vocab_size = vocab_size
+        self.max_length = max_length
+        self.model = None
+        self.tokenizer = None
+        
+    def build_model(self):
+        model = tf.keras.Sequential([
+            layers.Embedding(self.vocab_size, 128, input_length=self.max_length),
+            layers.LSTM(64, dropout=0.5, recurrent_dropout=0.5),
+            layers.Dense(32, activation='relu'),
+            layers.Dropout(0.5),
+            layers.Dense(1, activation='sigmoid')
+        ])
+        
+        model.compile(
+            optimizer='adam',
+            loss='binary_crossentropy',
+            metrics=['accuracy']
+        )
+        
+        self.model = model
+        return model
+    
+    def preprocess_text(self, texts):
+        if self.tokenizer is None:
+            raise ValueError("Tokenizer not loaded")
+            
+        sequences = self.tokenizer.texts_to_sequences(texts)
+        return tf.keras.preprocessing.sequence.pad_sequences(
+            sequences, maxlen=self.max_length
+        )
+    
+    def predict(self, texts):
+        processed_texts = self.preprocess_text(texts)
+        predictions = self.model.predict(processed_texts)
+        return predictions.flatten()
+    
+    def save_model(self, model_path, tokenizer_path):
+        self.model.save(model_path)
+        with open(tokenizer_path, 'wb') as f:
+            pickle.dump(self.tokenizer, f)
+    
+    def load_model(self, model_path, tokenizer_path):
+        self.model = tf.keras.models.load_model(model_path)
+        with open(tokenizer_path, 'rb') as f:
+            self.tokenizer = pickle.load(f)
+```
+
+## FastAPI Application Structure
+
+Create a scalable API structure:
+
+```python
+# app/main.py
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import List, Optional
+import logging
+import asyncio
+from contextlib import asynccontextmanager
+
+from .models import ModelManager
+from .batch_processor import BatchProcessor
+from .monitoring import metrics
+
+# Pydantic models
+class PredictionRequest(BaseModel):
+    text: str = Field(..., min_length=1, max_length=1000)
+    
+class BatchPredictionRequest(BaseModel):
+    texts: List[str] = Field(..., min_items=1, max_items=1000)
+    callback_url: Optional[str] = None
+
+class PredictionResponse(BaseModel):
+    text: str
+    sentiment: str
+    confidence: float
+    processing_time: float
+
+# Global variables
+model_manager = None
+batch_processor = None
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    global model_manager, batch_processor
+    model_manager = ModelManager()
+    await model_manager.load_model()
+    
+    batch_processor = BatchProcessor(model_manager)
+    
+    yield
+    
+    # Shutdown
+    await model_manager.cleanup()
+
+app = FastAPI(
+    title="Sentiment Analysis API",
+    description="Production-ready ML API with TensorFlow and FastAPI",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.post("/predict", response_model=PredictionResponse)
+async def predict_sentiment(request: PredictionRequest):
+    try:
+        start_time = time.time()
+        
+        prediction = await model_manager.predict_single(request.text)
+        sentiment = "positive" if prediction > 0.5 else "negative"
+        confidence = float(prediction if prediction > 0.5 else 1 - prediction)
+        
+        processing_time = time.time() - start_time
+        metrics.prediction_latency.observe(processing_time)
+        metrics.predictions_total.inc()
+        
+        return PredictionResponse(
+            text=request.text,
+            sentiment=sentiment,
+            confidence=confidence,
+            processing_time=processing_time
+        )
+        
+    except Exception as e:
+        metrics.prediction_errors.inc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/predict/batch")
+async def predict_batch(
+    request: BatchPredictionRequest,
+    background_tasks: BackgroundTasks
+):
+    try:
+        task_id = await batch_processor.submit_batch(
+            request.texts,
+            request.callback_url
+        )
+        
+        return {"task_id": task_id, "status": "submitted"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/batch/{task_id}")
+async def get_batch_status(task_id: str):
+    status = await batch_processor.get_task_status(task_id)
+    if not status:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return status
+```
+
+## Model Manager
+
+Implement efficient model loading and caching:
+
+```python
+# app/models.py
+import asyncio
+import threading
+import time
+from typing import List
+import tensorflow as tf
+from .sentiment_classifier import SentimentClassifier
+
+class ModelManager:
+    def __init__(self):
+        self.model = None
+        self.model_lock = threading.Lock()
+        self.load_time = None
+        
+    async def load_model(self):
+        """Load model asynchronously"""
+        loop = asyncio.get_event_loop()
+        
+        def load_sync():
+            with self.model_lock:
+                if self.model is None:
+                    start_time = time.time()
+                    self.model = SentimentClassifier()
+                    self.model.load_model(
+                        "models/sentiment_model.h5",
+                        "models/tokenizer.pkl"
+                    )
+                    self.load_time = time.time() - start_time
+                    
+        await loop.run_in_executor(None, load_sync)
+        
+    async def predict_single(self, text: str) -> float:
+        """Single prediction with async execution"""
+        if self.model is None:
+            raise RuntimeError("Model not loaded")
+            
+        loop = asyncio.get_event_loop()
+        
+        def predict_sync():
+            with self.model_lock:
+                return self.model.predict([text])[0]
+                
+        return await loop.run_in_executor(None, predict_sync)
+    
+    async def predict_batch(self, texts: List[str]) -> List[float]:
+        """Batch prediction with optimization"""
+        if self.model is None:
+            raise RuntimeError("Model not loaded")
+            
+        loop = asyncio.get_event_loop()
+        
+        def predict_sync():
+            with self.model_lock:
+                return self.model.predict(texts).tolist()
+                
+        return await loop.run_in_executor(None, predict_sync)
+    
+    async def cleanup(self):
+        """Clean up resources"""
+        if self.model and hasattr(self.model.model, 'reset_states'):
+            self.model.model.reset_states()
+```
+
+## Batch Processing with Celery
+
+Handle large-scale batch processing:
+
+```python
+# app/batch_processor.py
+import asyncio
+import uuid
+import json
+import redis
+from celery import Celery
+from typing import List, Optional
+import httpx
+
+# Celery configuration
+celery_app = Celery(
+    'batch_processor',
+    broker='redis://localhost:6379/0',
+    backend='redis://localhost:6379/0'
+)
+
+redis_client = redis.Redis(host='localhost', port=6379, db=1)
+
+class BatchProcessor:
+    def __init__(self, model_manager):
+        self.model_manager = model_manager
+        
+    async def submit_batch(
+        self, 
+        texts: List[str], 
+        callback_url: Optional[str] = None
+    ) -> str:
+        task_id = str(uuid.uuid4())
+        
+        # Store task metadata
+        task_data = {
+            "task_id": task_id,
+            "status": "pending",
+            "total_items": len(texts),
+            "processed_items": 0,
+            "callback_url": callback_url,
+            "created_at": time.time()
+        }
+        
+        redis_client.setex(
+            f"batch_task:{task_id}",
+            3600,  # 1 hour expiry
+            json.dumps(task_data)
+        )
+        
+        # Submit to Celery
+        process_batch_task.delay(task_id, texts)
+        
+        return task_id
+    
+    async def get_task_status(self, task_id: str) -> Optional[dict]:
+        task_data = redis_client.get(f"batch_task:{task_id}")
+        if task_data:
+            return json.loads(task_data)
+        return None
+
+@celery_app.task
+def process_batch_task(task_id: str, texts: List[str]):
+    """Process batch prediction task"""
+    try:
+        # Update status
+        task_data = json.loads(redis_client.get(f"batch_task:{task_id}"))
+        task_data["status"] = "processing"
+        redis_client.setex(f"batch_task:{task_id}", 3600, json.dumps(task_data))
+        
+        # Load model (in worker process)
+        model = SentimentClassifier()
+        model.load_model("models/sentiment_model.h5", "models/tokenizer.pkl")
+        
+        # Process in chunks for memory efficiency
+        chunk_size = 100
+        results = []
+        
+        for i in range(0, len(texts), chunk_size):
+            chunk = texts[i:i + chunk_size]
+            chunk_predictions = model.predict(chunk)
+            
+            for j, (text, prediction) in enumerate(zip(chunk, chunk_predictions)):
+                results.append({
+                    "text": text,
+                    "sentiment": "positive" if prediction > 0.5 else "negative",
+                    "confidence": float(prediction if prediction > 0.5 else 1 - prediction)
+                })
+            
+            # Update progress
+            task_data["processed_items"] = min(i + chunk_size, len(texts))
+            redis_client.setex(f"batch_task:{task_id}", 3600, json.dumps(task_data))
+        
+        # Store results
+        redis_client.setex(
+            f"batch_results:{task_id}",
+            3600,
+            json.dumps(results)
+        )
+        
+        # Update final status
+        task_data.update({
+            "status": "completed",
+            "processed_items": len(texts),
+            "completed_at": time.time()
+        })
+        redis_client.setex(f"batch_task:{task_id}", 3600, json.dumps(task_data))
+        
+        # Send callback if provided
+        if task_data.get("callback_url"):
+            asyncio.create_task(send_callback(task_data["callback_url"], task_id, results))
+            
+    except Exception as e:
+        # Update error status
+        task_data = json.loads(redis_client.get(f"batch_task:{task_id}"))
+        task_data.update({
+            "status": "failed",
+            "error": str(e),
+            "failed_at": time.time()
+        })
+        redis_client.setex(f"batch_task:{task_id}", 3600, json.dumps(task_data))
+
+async def send_callback(callback_url: str, task_id: str, results: List[dict]):
+    """Send callback notification"""
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                callback_url,
+                json={"task_id": task_id, "status": "completed", "results": results},
+                timeout=30.0
+            )
+    except Exception as e:
+        print(f"Callback failed: {e}")
+```
+
+## Performance Monitoring
+
+Add comprehensive monitoring:
+
+```python
+# app/monitoring.py
+from prometheus_client import Counter, Histogram, Gauge, generate_latest
+import time
+
+class Metrics:
+    def __init__(self):
+        self.predictions_total = Counter(
+            'ml_predictions_total', 
+            'Total number of predictions made'
+        )
+        
+        self.prediction_latency = Histogram(
+            'ml_prediction_duration_seconds',
+            'Time spent on predictions'
+        )
+        
+        self.prediction_errors = Counter(
+            'ml_prediction_errors_total',
+            'Total number of prediction errors'
+        )
+        
+        self.model_load_time = Gauge(
+            'ml_model_load_duration_seconds',
+            'Time taken to load the model'
+        )
+        
+        self.batch_tasks_active = Gauge(
+            'ml_batch_tasks_active',
+            'Number of active batch processing tasks'
+        )
+
+metrics = Metrics()
+
+@app.get("/metrics")
+async def get_metrics():
+    return Response(generate_latest(), media_type="text/plain")
+```
+
+## Deployment Configuration
+
+Docker setup for production:
+
+```dockerfile
+# Dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash app
+RUN chown -R app:app /app
+USER app
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Start command
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+## Key Takeaways
+
+- **Model Serving**: Use async/await for efficient model serving
+- **Batch Processing**: Implement Celery for handling large-scale requests
+- **Memory Management**: Process data in chunks to prevent OOM errors
+- **Monitoring**: Track latency, throughput, and error rates
+- **Security**: Use proper input validation and rate limiting
+- **Scalability**: Design for horizontal scaling with load balancers
+
+This architecture provides a solid foundation for deploying machine learning models at scale while maintaining performance and reliability.
