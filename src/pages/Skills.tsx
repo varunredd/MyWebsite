@@ -146,29 +146,6 @@ export const Skills = () => {
 
   useEffect(() => {
     trackExploreAction("Skills");
-
-    const state = history.state as any;
-    const scrollTargetId = state?.usr?.scrollTargetId || state?.scrollTargetId;
-
-    if (scrollTargetId) {
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-      window.scrollTo(0, 0);
-      setTimeout(() => {
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 50);
-
-      if (state?.usr) {
-        history.replaceState(
-          { ...state, usr: { ...state.usr, scrollTargetId: null } },
-          ""
-        );
-      } else {
-        history.replaceState({ ...state, scrollTargetId: null }, "");
-      }
-    }
   }, [trackExploreAction]);
 
   const restrictionsActive = level >= 3;
@@ -223,22 +200,21 @@ export const Skills = () => {
               onMouseEnter={() => ui.play("hover")}
             >
               <Sparkles className="mr-2 h-4 w-4" />
-              Skill Tree Accessed
+              Technical Skills
             </Badge>
 
             <h1 className="mb-6 text-fluid-xl font-orbitron font-bold">
               <span
                 className="glitch-text gradient-text-primary"
-                data-text="Ability Tree"
+                data-text="Technical Skills"
               >
-                Ability Tree
+                Technical Skills
               </span>
             </h1>
 
             <p className="mx-auto max-w-3xl text-fluid-md leading-relaxed text-muted-foreground font-rajdhani">
-              A comprehensive overview of my technical abilities, organized by
-              domain. Each skill has been leveled up through real-world projects
-              and professional experience.
+              A comprehensive overview of my technical abilities, organized by domain.
+              Each skill has been built through real-world projects and professional experience.
             </p>
           </div>
         </div>
@@ -429,10 +405,10 @@ export const Skills = () => {
         <div className="container relative z-10 mx-auto px-4">
           <div className="mx-auto max-w-5xl text-center">
             <h2 className="mb-10 text-3xl sm:text-4xl font-orbitron font-bold gradient-text-secondary neon-underline">
-              Skill Tree Legend
+              Skills Overview
             </h2>
 
-            <div className="mb-12 grid grid-cols-2 gap-6 md:grid-cols-4">
+            <div className="mb-12 grid grid-cols-2 gap-6 max-w-lg mx-auto">
               <div className="space-y-2 hud-bracket px-3 py-2">
                 <div className="text-3xl font-orbitron font-bold gradient-text-primary stat-glow">
                   {stats.total}
@@ -441,16 +417,7 @@ export const Skills = () => {
                   Skill Domains
                 </div>
               </div>
-
-              <div className="space-y-2 hud-bracket px-3 py-2">
-                <div className="text-3xl font-orbitron font-bold text-success stat-glow">
-                  {stats.mastered}
-                </div>
-                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
-                  Unlocked
-                </div>
-              </div>
-
+              
               <div className="space-y-2 hud-bracket px-3 py-2">
                 <div className="text-3xl font-orbitron font-bold gradient-text-secondary stat-glow">
                   {stats.avgMastery}%
@@ -459,48 +426,8 @@ export const Skills = () => {
                   Avg Mastery
                 </div>
               </div>
-
-              <div className="space-y-2 hud-bracket px-3 py-2">
-                <div className="text-3xl font-orbitron font-bold text-warning stat-glow">
-                  Level {level}
-                </div>
-                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
-                  Current Rank
-                </div>
-              </div>
             </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div className="space-y-2" onMouseEnter={() => ui.play("hover")}>
-                <div className="mx-auto h-10 w-10 rounded-xl bg-muted/50 border border-white/10" />
-                <div className="text-base font-semibold text-foreground font-rajdhani">
-                  Locked
-                </div>
-                <div className="text-sm text-muted-foreground font-rajdhani">
-                  Level requirement not met
-                </div>
-              </div>
-
-              <div className="space-y-2" onMouseEnter={() => ui.play("hover")}>
-                <div className="mx-auto h-10 w-10 rounded-xl border border-primary/25 bg-background/35 neon-glow-cyan" />
-                <div className="text-base font-semibold text-foreground font-rajdhani">
-                  Available
-                </div>
-                <div className="text-sm text-muted-foreground font-rajdhani">
-                  Ready to explore
-                </div>
-              </div>
-
-              <div className="space-y-2" onMouseEnter={() => ui.play("hover")}>
-                <div className="mx-auto h-10 w-10 rounded-xl border border-success/25 bg-background/35 neon-glow-green" />
-                <div className="text-base font-semibold text-foreground font-rajdhani">
-                  Mastered
-                </div>
-                <div className="text-sm text-muted-foreground font-rajdhani">
-                  Skill unlocked and leveled
-                </div>
-              </div>
-            </div>
+      
           </div>
         </div>
       </section>

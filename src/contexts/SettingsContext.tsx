@@ -51,13 +51,13 @@ const defaultSettings: Settings = {
   general: { language: "en", timeFormat: "24h" },
   appearance: {
     theme: "system",
-    accent: "cyan",
+    accent: "green",
     fontScale: 1.0, // normalized
     highContrast: false,
   },
   audio: {
-    uiSounds: true,
-    bgm: { enabled: true, volume: 0.4 },
+    uiSounds: false,
+    bgm: { enabled: false, volume: 0.4 },
   },
   motion: {
     reduceMotion: "system",
@@ -100,7 +100,7 @@ const migrateAccent = (a: string): Settings["appearance"]["accent"] => {
   if (a === "lime") return "green";
   if (a === "violet") return "purple";
   // Fallback
-  return "cyan";
+  return "green";
 };
 
 // old integer scale (-1..2) → normalized (0.8..1.6). If already normalized, just clamp

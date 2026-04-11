@@ -392,9 +392,9 @@ export const NewSettings = () => {
                 <Switch
                   checked={settings.audio.uiSounds}
                   onCheckedChange={(checked) => {
+                    ui.click();
                     updateSettings("audio.uiSounds", checked);
                   }}
-                  onClick={ui.click}
                 />
               )}
 
@@ -417,9 +417,9 @@ export const NewSettings = () => {
                   <Switch
                     checked={bgmEnabled}
                     onCheckedChange={(checked) => {
+                      ui.click();
                       setBgmEnabled(checked);
                     }}
-                    onClick={ui.click}
                   />
                 </div>
 
@@ -488,10 +488,10 @@ export const NewSettings = () => {
                 "Enhanced focus indicators",
                 <Switch
                   checked={settings.motion.keyboardAid}
-                  onCheckedChange={(checked) =>
-                    updateSettings("motion.keyboardAid", checked)
-                  }
-                  onClick={ui.click}
+                  onCheckedChange={(checked) => {
+                    ui.click();
+                    updateSettings("motion.keyboardAid", checked);
+                  }}
                 />
               )}
 
@@ -500,10 +500,10 @@ export const NewSettings = () => {
                 "Adjust colors for better visibility",
                 <Switch
                   checked={settings.motion.colorblindAid}
-                  onCheckedChange={(checked) =>
-                    updateSettings("motion.colorblindAid", checked)
-                  }
-                  onClick={ui.click}
+                  onCheckedChange={(checked) => {
+                    ui.click();
+                    updateSettings("motion.colorblindAid", checked);
+                  }}
                 />
               )}
             </div>
@@ -523,10 +523,10 @@ export const NewSettings = () => {
                 "Display the game interface",
                 <Switch
                   checked={settings.game.showHud}
-                  onCheckedChange={(checked) =>
-                    updateSettings("game.showHud", checked)
-                  }
-                  onClick={ui.click}
+                  onCheckedChange={(checked) => {
+                    ui.click();
+                    updateSettings("game.showHud", checked);
+                  }}
                 />
               )}
 
@@ -614,10 +614,10 @@ export const NewSettings = () => {
                 "Show XP and badge notifications",
                 <Switch
                   checked={settings.notifications.toasts}
-                  onCheckedChange={(checked) =>
-                    updateSettings("notifications.toasts", checked)
-                  }
-                  onClick={ui.click}
+                  onCheckedChange={(checked) => {
+                    ui.click();
+                    updateSettings("notifications.toasts", checked);
+                  }}
                 />
               )}
 

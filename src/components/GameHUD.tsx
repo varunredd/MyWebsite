@@ -226,71 +226,76 @@ export const useGameState = () => {
 
 export const GameHUD = () => {
   const { progress, xp, level, badges } = useGameState();
+  const [visible, setVisible] = useState(false);
+  const [prevXp, setPrevXp] = useState(xp);
+
+  // Show HUD for 4 seconds whenever XP changes
+  useEffect(() => {
+    if (xp !== prevXp) {
+      setVisible(true);
+      setPrevXp(xp);
+      const timer = setTimeout(() => setVisible(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [xp, prevXp]);
 
   const currentLevelXP = level >= MAX_LEVEL ? XP_TO_NEXT : xp % XP_TO_NEXT;
   const progressPct =
     level >= MAX_LEVEL ? 100 : (currentLevelXP / XP_TO_NEXT) * 100;
 
   return (
-    <div className="fixed top-28 right-3 z-30 sm:top-28 sm:right-4 lg:top-32 lg:right-6">
+    <div
+      className={`
+        fixed top-3 sm:top-4 z-40
+        transition-all duration-500 ease-in-out
+        ${visible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8 pointer-events-none"}
+      `}
+      style={{ right: "max(0.75rem, calc((100vw - 1200px) / 2 - 200px))" }}
+    >
       <div
         className="
-          min-w-[220px] rounded-2xl
+          min-w-[180px] rounded-2xl
           border border-card-border/50
           bg-background/85 backdrop-blur-xl
           shadow-[0_12px_40px_rgba(0,0,0,.28)]
-          px-4 py-3.5 space-y-3
+          px-3.5 py-3 space-y-2.5
         "
       >
         {/* Header */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Star className="w-4.5 h-4.5 text-warning" />
-            <span className="text-[14px] font-mono font-semibold leading-none">
+            <Star className="w-4 h-4 text-warning" />
+            <span className="text-[13px] font-mono font-semibold leading-none">
               Level {level}
             </span>
           </div>
-          <div className="text-[12px] leading-none text-muted-foreground font-mono">
+          <div className="text-[11px] leading-none text-muted-foreground font-mono">
             #{progress.sessionId.slice(-4)}
           </div>
         </div>
 
         {/* Progress */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-[12px] font-mono text-muted-foreground">
+          <div className="flex justify-between text-[11px] font-mono text-muted-foreground">
             <span>XP</span>
             <span className="tabular-nums text-foreground/90">
               {level >= MAX_LEVEL ? "MAX" : `${currentLevelXP}/${XP_TO_NEXT}`}
             </span>
           </div>
-          <Progress className="h-2 rounded-full" value={progressPct} />
-          {level >= MAX_LEVEL && (
-            <div className="text-[11px] text-center text-warning font-semibold">
-              🏆 LEGENDARY
-            </div>
-          )}
+          <Progress className="h-1.5 rounded-full" value={progressPct} />
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 gap-3 text-[13px]">
+        <div className="grid grid-cols-2 gap-3 text-[12px]">
           <div className="flex items-center gap-1.5">
-            <Zap className="w-4 h-4 text-primary" />
+            <Zap className="w-3.5 h-3.5 text-primary" />
             <span className="font-mono tabular-nums">{xp}</span>
           </div>
           <div className="flex items-center gap-1.5 justify-end">
-            <Trophy className="w-4 h-4 text-warning" />
+            <Trophy className="w-3.5 h-3.5 text-warning" />
             <span className="font-mono tabular-nums">{badges.length}</span>
           </div>
         </div>
-
-        {/* Last earned badge */}
-        {badges.length > 0 && (
-          <div className="pt-2 mt-0.5 border-t border-card-border/60">
-            <Badge variant="secondary" className="text-[12px] leading-none px-2.5 py-1">
-              {badges[badges.length - 1]}
-            </Badge>
-          </div>
-        )}
       </div>
     </div>
   );

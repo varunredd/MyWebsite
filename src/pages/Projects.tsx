@@ -58,30 +58,6 @@ export const Projects = () => {
 
   useEffect(() => {
     trackExploreAction("Projects");
-
-    const state = history.state as any;
-    const scrollTargetId = state?.usr?.scrollTargetId || state?.scrollTargetId;
-
-    if (scrollTargetId) {
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-      window.scrollTo(0, 0);
-
-      setTimeout(() => {
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 50);
-
-      if (state?.usr) {
-        history.replaceState(
-          { ...state, usr: { ...state.usr, scrollTargetId: null } },
-          ""
-        );
-      } else {
-        history.replaceState({ ...state, scrollTargetId: null }, "");
-      }
-    }
   }, [trackExploreAction]);
 
   const getDifficulty = (project: Project) =>
@@ -125,7 +101,7 @@ export const Projects = () => {
               onMouseEnter={() => ui.play("hover")}
             >
               <Trophy className="mr-2 h-4 w-4" />
-              Quest Archive Accessed
+              Projects
             </Badge>
 
             <h1
@@ -135,16 +111,15 @@ export const Projects = () => {
             >
               <span
                 className="glitch-text gradient-text-primary"
-                data-text="Completed Quests"
+                data-text="Projects"
               >
-                Completed Quests
+                Projects
               </span>
             </h1>
 
             <p className="mx-auto max-w-3xl text-fluid-md leading-relaxed text-muted-foreground font-rajdhani">
-              Explore the digital realms I&apos;ve conquered. Each project
-              represents a unique challenge, deliberate engineering choices, and
-              practical lessons learned while building production-ready software.
+            Each project represents a unique challenge, deliberate engineering choices,
+            and practical lessons learned while building production-ready software.
             </p>
           </div>
         </div>
@@ -303,16 +278,16 @@ export const Projects = () => {
         <div className="container relative z-10 mx-auto px-4">
           <div className="mx-auto max-w-5xl text-center">
             <h2 className="mb-12 text-3xl sm:text-4xl font-orbitron font-bold gradient-text-secondary neon-underline">
-              Quest Statistics
+              Project Stats
             </h2>
 
-            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-              <div className="space-y-2 hud-bracket px-3 py-2">
+              <div className="grid grid-cols-2 gap-6 max-w-md mx-auto">
+                <div className="space-y-2 hud-bracket px-3 py-2">
                 <div className="text-3xl font-orbitron font-bold gradient-text-primary stat-glow">
                   {projectData.length}
                 </div>
                 <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
-                  Completed Quests
+                  Projects
                 </div>
               </div>
 
@@ -322,24 +297,6 @@ export const Projects = () => {
                 </div>
                 <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
                   Technologies Used
-                </div>
-              </div>
-
-              <div className="space-y-2 hud-bracket px-3 py-2">
-                <div className="text-3xl font-orbitron font-bold gradient-text-secondary stat-glow">
-                  {viewedProjects.length}
-                </div>
-                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
-                  Projects Explored
-                </div>
-              </div>
-
-              <div className="space-y-2 hud-bracket px-3 py-2">
-                <div className="text-3xl font-orbitron font-bold text-warning stat-glow">
-                  Level {level}
-                </div>
-                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
-                  Current Rank
                 </div>
               </div>
             </div>

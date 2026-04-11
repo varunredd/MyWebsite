@@ -1,73 +1,177 @@
-# Welcome to your Lovable project
+# 🚀 My Portfolio Website
 
-## Project info
+> A modern, interactive developer portfolio built to showcase my work in software engineering, AI product development, projects, skills, and technical journey — through a cleaner, more memorable experience than a traditional resume site.
 
-**URL**: https://lovable.dev/projects/4633044a-fc46-48e8-9d3d-f005d180a634
+Built with React, TypeScript, Vite, Tailwind CSS, and shadcn/ui, the project emphasizes clean UI, reusable architecture, responsive design, and a stronger presentation of technical work.
+---
 
-## How can I edit this code?
+## ✨ Why I Built This
 
-There are several ways of editing your application.
+A resume tells people **what** I have done.  
+This website is built to show **how I think, what I build, and the kind of engineer I am becoming**.
 
-**Use Lovable**
+I wanted a portfolio that feels:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4633044a-fc46-48e8-9d3d-f005d180a634) and start prompting.
+- modern and sharp
+- interactive instead of static
+- personal without feeling cluttered
+- technical enough for recruiters and engineers
+- flexible enough to grow with my projects, blogs, and AI work
 
-Changes made via Lovable will be committed automatically to this repo.
+Instead of just listing experience, this site creates a stronger presentation layer around my profile.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🧠 What This Website Includes
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- A polished landing page with strong first-impression design
+- Dedicated sections for projects, skills, experience, and background
+- Blog/content support for technical writing
+- Reusable UI components and clean frontend structure
+- Responsive design for desktop and mobile
+- Theme-driven styling with modern UI patterns
+- A portfolio experience designed to feel intentional, not generic
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+## ⚙️ Tech Stack
+
+This project is built with a modern frontend stack:
+
+- **React**
+- **TypeScript**
+- **Vite**
+- **Tailwind CSS**
+- **shadcn/ui**
+- **React Router**
+- **TanStack React Query**
+- **MDX**
+- **Zod**
+- **Radix UI**
+
+---
+
+## 🏗️ Project Philosophy
+
+This portfolio was built with a few clear principles:
+
+### 1. Clarity first
+Every section should communicate something meaningful quickly.
+
+### 2. Strong visual identity
+The site should feel premium, clean, and memorable.
+
+### 3. Real engineering structure
+Even though this is a portfolio, it is still treated like a proper frontend project with reusable components, maintainable structure, and scalable organization.
+
+### 4. Room to evolve
+New projects, blogs, visuals, and experiments can be added over time without rebuilding everything from scratch.
+
+---
+
+## 📂 Project Structure
+
+```bash
+src/
+├── components/      # Reusable UI and feature components
+├── pages/           # Main application pages
+├── data/            # Portfolio content and structured data
+├── content/         # Blog and MDX content
+├── hooks/           # Custom hooks
+├── contexts/        # App-wide state/providers
+├── utils/           # Utility helpers
+├── assets/          # Images, icons, and static resources
+```
+
+---
+
+## 🚀 Getting Started
+
+### Clone the repository
+
+```bash
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Install dependencies
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+npm install
+```
+
+### Start the development server
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will start locally with hot reload for development.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 📜 Available Scripts
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+npm run dev        # Start local development server
+npm run build      # Build for production
+npm run build:dev  # Development build
+npm run preview    # Preview production build locally
+npm run lint       # Run lint checks
+```
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 🎯 What Makes This Project Different
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+A lot of portfolio websites feel copied, overdesigned, or empty behind the visuals.
 
-## How can I deploy this project?
+This one is different because it is built around:
 
-Simply open [Lovable](https://lovable.dev/projects/4633044a-fc46-48e8-9d3d-f005d180a634) and click on Share -> Publish.
+- my actual engineering direction
+- my own project storytelling
+- my AI and software development focus
+- a cleaner personal brand
+- a stronger presentation of technical work
 
-## Can I connect a custom domain to my Lovable project?
+It is not just a site to “have a portfolio.”  
+It is a project that represents how I want to be seen as a developer.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🔮 Future Improvements
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project will continue evolving with:
+
+- richer project case studies
+- improved motion and interaction design
+- stronger blog and writing integration
+- deeper AI project showcases
+- better storytelling around engineering impact
+- more refined UI/UX polish
+
+---
+
+## 👨‍💻 About Me
+
+I’m a software engineer focused on building practical, modern products with strong interest in:
+
+- AI-powered applications
+- full-stack product development
+- search, ranking, and intelligent systems
+- clean frontend experiences
+- scalable backend design
+
+This portfolio is one part of that journey.
+
+---
+
+## 📬 Contact
+
+If you want to connect, collaborate, or discuss opportunities, feel free to reach out through the contact section of the site.
+
+---
+
+## 📝 Note
+
+This README reflects the current custom version of the project.  

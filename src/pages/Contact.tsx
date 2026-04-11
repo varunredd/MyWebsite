@@ -91,19 +91,19 @@ export const Contact = () => {
   const contactInfo = [
     {
       icon: Mail,
-      label: "Email Portal",
+      label: "Email",
       value: personal.email,
       href: `mailto:${personal.email}`,
     },
     {
       icon: Phone,
-      label: "Voice Channel",
+      label: "Phone",
       value: personal.phone,
       href: `tel:${personal.phone.replace(/-/g, "")}`,
     },
     {
       icon: MapPin,
-      label: "Location Marker",
+      label: "Location",
       value: personal.location,
       href: "#",
     },
@@ -139,22 +139,21 @@ export const Contact = () => {
               onMouseEnter={() => ui.play("hover")}
             >
               <MessageSquare className="mr-2 h-4 w-4" />
-              Communication Portal Active
+              Get in Touch
             </Badge>
 
             <h1 className="mb-6 text-fluid-xl font-orbitron font-bold">
               <span
                 className="glitch-text gradient-text-primary"
-                data-text="Open Portal"
+                data-text="Contact Me"
               >
-                Open Portal
+                Contact Me
               </span>
             </h1>
 
             <p className="mx-auto max-w-3xl text-fluid-md leading-relaxed text-muted-foreground font-rajdhani">
-              Ready to embark on a new quest together? Open a communication
-              portal and let&apos;s discuss your next digital adventure. Every
-              message earns you XP.
+            Have a project idea or want to connect? 
+            Drop me a message and I&apos;ll get back to you.
             </p>
           </div>
         </div>
@@ -170,11 +169,10 @@ export const Contact = () => {
             <Card className="holo-card card-game card-surface rounded-2xl p-7 sm:p-8">
               <div className="mb-6">
                 <h2 className="mb-2 text-2xl sm:text-3xl font-orbitron font-bold gradient-text-primary">
-                  Cast Your Message Spell
+                  Send a Message
                 </h2>
                 <p className="text-[1.05rem] leading-relaxed text-muted-foreground font-rajdhani">
-                  Fill out the form below to send your message through the
-                  portal.
+                Fill out the form below and I&apos;ll respond within 24 hours.
                 </p>
               </div>
 
@@ -218,7 +216,7 @@ export const Contact = () => {
                   </label>
                   <Input
                     name="subject"
-                    placeholder="What&apos;s this quest about?"
+                    placeholder="What&apos;s this about?"
                     value={formData.subject}
                     onChange={handleInputChange}
                     onFocus={() => ui.play("hover")}
@@ -233,7 +231,7 @@ export const Contact = () => {
                   </label>
                   <Textarea
                     name="message"
-                    placeholder="Describe your quest, project ideas, or just say hello..."
+                    placeholder="Describe your project, ideas, or just say hello..."
                     value={formData.message}
                     onChange={handleInputChange}
                     onFocus={() => ui.play("hover")}
@@ -253,12 +251,12 @@ export const Contact = () => {
                   {isSubmitting ? (
                     <>
                       <Shield className="mr-2 h-5 w-5 animate-spin" />
-                      Casting Spell...
+                      Sending...
                     </>
                   ) : (
                     <>
                       <Send className="mr-2 h-5 w-5" />
-                      Send Message (+100 XP)
+                      Send Message
                     </>
                   )}
                 </Button>
@@ -270,7 +268,7 @@ export const Contact = () => {
                     onMouseEnter={() => ui.play("hover")}
                   >
                     <Zap className="mr-1.5 h-3 w-3" />
-                    Sending a message grants 100 XP and the Message Caster badge
+                    I typically respond within 24 hours
                   </Badge>
                 </div>
               </form>
@@ -280,7 +278,7 @@ export const Contact = () => {
             <div className="space-y-8">
               <Card className="holo-card card-game card-surface rounded-2xl p-6 sm:p-7">
                 <h3 className="mb-6 text-2xl font-orbitron font-semibold gradient-text-secondary">
-                  Alternative Portals
+                Contact Info
                 </h3>
 
                 <div className="space-y-3">

@@ -110,8 +110,8 @@ export const Home = () => {
     trackExploreAction("Home");
   }, [trackExploreAction]);
 
-  const scrollToQuests = () => {
-    const el = document.getElementById("quests");
+  const scrollToWork = () => {
+    const el = document.getElementById("work");
     if (!el) return;
     el.scrollIntoView({ behavior: "auto", block: "start" });
 
@@ -124,7 +124,7 @@ export const Home = () => {
 
   const handleStartJourney = () => {
     ui.play("click");
-    scrollToQuests();
+    scrollToWork();
   };
 
   const handleOpenPortal = () => {
@@ -133,7 +133,7 @@ export const Home = () => {
     navigate("/contact");
   };
 
-  const handleDownloadArtifact = () => {
+  const handleDownloadResume = () => {
     ui.play("click");
     trackCriticalAction("Resume download");
     const link = document.createElement("a");
@@ -274,7 +274,7 @@ export const Home = () => {
               <LiquidButton
                 variant="lime"
                 className="px-8"
-                onClick={handleDownloadArtifact}
+                onClick={handleDownloadResume}
                 onMouseEnter={() => ui.play("hover")}
                 ariaLabel="Download resume"
               >
@@ -319,7 +319,7 @@ export const Home = () => {
                 className="animate-bounce hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                 onClick={() => {
                   ui.play("click");
-                  scrollToQuests();
+                  scrollToWork();
                 }}
                 onMouseEnter={() => ui.play("hover")}
                 aria-label="Scroll down"
@@ -332,7 +332,7 @@ export const Home = () => {
       </section>
 
       {/* ═══════════ WHAT I DO ═══════════ */}
-      <section id="quests" className="py-20 surface relative">
+      <section id="work" className="py-20 surface relative">
         {/* Circuit trace animated top border */}
         <div className="circuit-border absolute top-0 left-0 w-full" />
 

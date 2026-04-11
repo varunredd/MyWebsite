@@ -642,6 +642,7 @@ main {
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
+    pointer-events: none;
     background: linear-gradient(
       135deg,
       hsl(180 100% 50% / 0) 0%,
@@ -694,7 +695,7 @@ main {
       transparent 100%
     );
     background-size: 200% 100%;
-    animation: circuit-flow 4s linear infinite;
+    animation: circuit-flow 10s linear infinite;
   }
 
   @keyframes circuit-flow {
@@ -719,19 +720,7 @@ main {
 
   /* --- Stat counter glow pulse --- */
   .stat-glow {
-    text-shadow:
-      0 0 8px currentColor,
-      0 0 20px currentColor;
-    animation: stat-pulse 3s ease-in-out infinite;
-  }
-
-  @keyframes stat-pulse {
-    0%, 100% {
-      text-shadow: 0 0 8px currentColor, 0 0 20px currentColor;
-    }
-    50% {
-      text-shadow: 0 0 12px currentColor, 0 0 30px currentColor, 0 0 45px currentColor;
-    }
+    text-shadow: 0 0 6px currentColor;
   }
 
   /* --- Neon underline for section headers --- */

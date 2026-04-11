@@ -127,7 +127,7 @@ export const Navigation = () => {
       {/* Desktop Navigation */}
       <header className="fixed inset-x-0 top-3 sm:top-4 z-40 px-3 sm:px-4 lg:px-6">
         <div
-          className="mx-auto flex h-16 w-full max-w-[1500px] items-center gap-4 rounded-[24px] border border-white/10 bg-background/70 px-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:px-5 lg:px-6"
+          className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-4 rounded-[24px] border border-white/10 bg-background/70 px-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:px-5 lg:px-6"
         >
           {/* Logo (left) */}
           <button

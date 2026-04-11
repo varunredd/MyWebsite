@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import { Navigation } from "@/components/Navigation";
 import { GameHUD, GameProvider } from "@/components/GameHUD";
@@ -25,6 +25,29 @@ import { ThemeSettingsProvider } from "@/context/ThemeSettingsContext";
 
 import OnboardingTour from "@/components/ui/onboarding-tour";
 import GooFilter from "./components/ui/GooFilter";
+import { useEffect } from "react";
+
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    // Beat any page-level setTimeout scroll logic
+    const t1 = setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 60);
+
+    return () => clearTimeout(t1);
+  }, [pathname]);
+
+  return null;
+}
 
 // ✅ fixed background video (desktop only)
 function FixedBgVideo() {
@@ -71,6 +94,7 @@ const App = () => (
             <UiSounds>
               <TooltipProvider>
                 <BrowserRouter>
+                  <ScrollToTop />
                   <GooFilter />
                   {/* 🔳 Fixed background video behind the whole app (desktop) */}
                   <FixedBgVideo />

@@ -145,22 +145,20 @@ export const Blog = () => {
               onMouseEnter={() => ui.play("hover")}
             >
               <Sparkles className="mr-2 h-4 w-4" />
-              Lore & Tech Archive
+              Blog
             </Badge>
 
             <h1 className="mb-6 text-fluid-xl font-orbitron font-bold">
               <span
                 className="glitch-text gradient-text-primary"
-                data-text="Lore & Tech Codex"
+                data-text="Blog"
               >
-                Lore & Tech Codex
+                Blog
               </span>
             </h1>
 
             <p className="mx-auto max-w-3xl text-fluid-md leading-relaxed text-muted-foreground font-rajdhani">
-              Embark on knowledge quests through the realms of technology. Each
-              scroll grants experience, sharpens engineering instincts, and
-              unlocks new abilities.
+              Notes on things I'm learning and building — backend systems, ML pipelines, and the tools behind them.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-6">
@@ -169,7 +167,7 @@ export const Blog = () => {
                 onMouseEnter={() => ui.play("hover")}
               >
                 <Award className="h-5 w-5 text-primary" />
-                <span>{blogPosts.length} Codex Entries</span>
+                <span>{blogPosts.length} Blog Posts</span>
               </div>
 
               <div
@@ -337,11 +335,11 @@ export const Blog = () => {
               </div>
 
               <h3 className="mt-6 text-2xl font-orbitron font-semibold text-foreground">
-                No codex entries found
+               No posts found
               </h3>
 
               <p className="mx-auto mt-3 max-w-md text-muted-foreground font-rajdhani">
-                Try changing the search terms or filters to reveal more scrolls.
+                Try changing the search terms or filters.
               </p>
             </div>
           )}

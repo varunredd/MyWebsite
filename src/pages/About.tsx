@@ -21,31 +21,7 @@ export const About = () => {
 
   useEffect(() => {
     trackExploreAction("About");
-
-    const state = history.state as any;
-    const scrollTargetId = state?.usr?.scrollTargetId || state?.scrollTargetId;
-
-    if (scrollTargetId) {
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-      window.scrollTo(0, 0);
-
-      setTimeout(() => {
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 50);
-
-      if (state?.usr) {
-        history.replaceState(
-          { ...state, usr: { ...state.usr, scrollTargetId: null } },
-          ""
-        );
-      } else {
-        history.replaceState({ ...state, scrollTargetId: null }, "");
-      }
-    }
-  }, [trackExploreAction, location]);
+  }, [trackExploreAction]);
 
   return (
     <div className="min-h-screen">
@@ -62,7 +38,7 @@ export const About = () => {
               onMouseEnter={() => ui.play("hover")}
             >
               <Award className="mr-2 h-4 w-4" />
-              Character Profile Unlocked
+              About Me
             </Badge>
 
             <h1
@@ -72,9 +48,9 @@ export const About = () => {
             >
               <span
                 className="glitch-text gradient-text-primary"
-                data-text="Origin Story"
+                data-text="About Me"
               >
-                Origin Story
+                About Me
               </span>
             </h1>
 
@@ -93,7 +69,7 @@ export const About = () => {
           <div className="mx-auto max-w-5xl">
             <div className="mb-16 text-center">
               <h2 className="text-3xl sm:text-4xl font-orbitron font-bold gradient-text-secondary neon-underline">
-                Experience Quest Log
+                Work Experience
               </h2>
             </div>
 
@@ -253,7 +229,7 @@ export const About = () => {
                   onMouseEnter={() => ui.play("hover")}
                 >
                   <Target className="mr-2 h-4 w-4" />
-                  Core Directive
+                  What Drives Me
                 </Badge>
 
                 <p className="text-lg sm:text-xl leading-relaxed text-muted-foreground font-rajdhani">
