@@ -17,38 +17,13 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { name: "Start Mission", path: "/", icon: Home, description: "Home Base" },
-  {
-    name: "Origin Story",
-    path: "/about",
-    icon: User,
-    description: "Character Profile",
-  },
-  {
-    name: "Completed Quests",
-    path: "/projects",
-    icon: Briefcase,
-    description: "Portfolio",
-  },
-  {
-    name: "Lore & Tech Codex",
-    path: "/blog",
-    icon: BookOpen,
-    description: "Blog",
-  },
-  {
-    name: "Skill Tree",
-    path: "/skills",
-    icon: GitBranch,
-    description: "Expertise",
-  },
-  { name: "Open Portal", path: "/contact", icon: Mail, description: "Contact" },
-  {
-    name: "Control Panel",
-    path: "/settings",
-    icon: Settings,
-    description: "Settings",
-  },
+  { name: "Home", path: "/", icon: Home, description: "Home" },
+  { name: "About", path: "/about", icon: User, description: "About Me" },
+  { name: "Projects", path: "/projects", icon: Briefcase, description: "Portfolio" },
+  { name: "Blog", path: "/blog", icon: BookOpen, description: "Blog" },
+  { name: "Skills", path: "/skills", icon: GitBranch, description: "Skills" },
+  { name: "Contact", path: "/contact", icon: Mail, description: "Contact" },
+  { name: "Settings", path: "/settings", icon: Settings, description: "Settings" },
 ];
 
 export const Navigation = () => {
@@ -114,22 +89,22 @@ export const Navigation = () => {
                       flex items-center gap-3 px-3 py-2 rounded-lg font-medium
                       transition-all duration-200
                       text-muted-foreground hover:text-foreground
-                      hover:bg-transparent
+                      hover:bg-white/[0.04]
                       ${mobile ? "w-full justify-start" : ""}
           `}
-          style={{ filter: "url(#goo)" }} // 👈 apply goo filter
         >
           {/* liquid blobs */}
           <span
-            className="pointer-events-none absolute -z-10 inset-0 opacity-0
-                  transition-opacity duration-300 group-hover:opacity-100"
+            className="pointer-events-none absolute inset-0 -z-10 opacity-0
+                  transition-opacity duration-300 group-hover:opacity-80"
+            style={{ filter: "url(#goo)" }}
           >
             {/* left blob */}
             <span
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2
-                    w-20 h-10 rounded-full bg-primary/25 blur-[10px]
+                    w-16 h-8 rounded-full bg-primary/12 blur-[12px]
                     transition-transform duration-500
-                    group-hover:translate-x-4 group-hover:scale-110"
+                    group-hover:translate-x-2 group-hover:scale-105"
             />
           </span>
 

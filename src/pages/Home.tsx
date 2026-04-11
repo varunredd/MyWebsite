@@ -31,6 +31,7 @@ function BadgePill({
 }) {
   const Icon =
     icon === "map-pin" ? MapPin : icon === "calendar" ? Calendar : Shield;
+
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1
@@ -62,6 +63,7 @@ export const Home = () => {
     const el = document.getElementById("quests");
     if (!el) return;
     el.scrollIntoView({ behavior: "auto", block: "start" });
+
     setTimeout(() => {
       const rect = el.getBoundingClientRect();
       const targetY = window.scrollY + rect.top - 80;
@@ -99,6 +101,7 @@ export const Home = () => {
       "/projects": "projects",
       "/skills": "skills",
     };
+
     const target = targetMap[route];
     if (target) navigateTo(target, navigate);
     else navigate(route);
@@ -107,11 +110,9 @@ export const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Hero Content */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-28 sm:pt-32 lg:pt-36">
         <div className="relative z-10 container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto space-y-6">
-            {/* Badge */}
             <div className="flex justify-center">
               <Badge
                 variant="secondary"
@@ -123,7 +124,6 @@ export const Home = () => {
               </Badge>
             </div>
 
-            {/* Main Heading */}
             <div className="space-y-4">
               <h1 className="text-fluid-xl font-bold leading-tight">
                 <span className="gradient-text-primary">{personal.name}</span>
@@ -148,7 +148,6 @@ export const Home = () => {
               </p>
             </div>
 
-            {/* Stats */}
             <div className="flex flex-wrap justify-center gap-8 text-center">
               <div className="space-y-1">
                 <div className="text-2xl font-bold gradient-text-primary">
@@ -158,6 +157,7 @@ export const Home = () => {
                   Years Experience
                 </div>
               </div>
+
               <div className="space-y-1">
                 <div className="text-2xl font-bold gradient-text-secondary">
                   {stats.projects}
@@ -166,6 +166,7 @@ export const Home = () => {
                   Projects Built
                 </div>
               </div>
+
               <div className="space-y-1">
                 <div className="text-2xl font-bold text-success">
                   {stats.technologies}
@@ -176,7 +177,6 @@ export const Home = () => {
               </div>
             </div>
 
-            {/* CTAs */}
             <div className="flex flex-wrap justify-center gap-4">
               <LiquidButton
                 variant="cyan"
@@ -212,9 +212,7 @@ export const Home = () => {
               </LiquidButton>
             </div>
 
-            {/* Social Links + Scroll Arrow — grouped together, properly spaced */}
             <div className="flex flex-col items-center gap-6 pt-4">
-              {/* Social Icons */}
               <div className="flex justify-center gap-4">
                 {[
                   {
@@ -245,7 +243,6 @@ export const Home = () => {
                 ))}
               </div>
 
-              {/* Scroll Arrow — directly below social icons, not absolute positioned */}
               <button
                 className="animate-bounce hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
                 onClick={() => {
@@ -276,11 +273,11 @@ export const Home = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-8 items-stretch">
               {quickLinks.map((item, index) => (
                 <div
                   key={index}
-                  className="card-game card-surface p-6 rounded-lg hover:scale-105 transition-transform duration-200"
+                  className="card-game card-surface p-6 rounded-lg hover:scale-105 transition-transform duration-200 h-full flex flex-col"
                   onMouseEnter={() => ui.play("cardhover")}
                 >
                   <h3
@@ -294,12 +291,14 @@ export const Home = () => {
                   >
                     {item.title}
                   </h3>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
+
+                  <p className="text-muted-foreground leading-relaxed flex-1">
                     {item.description}
                   </p>
+
                   <Button
                     variant="outline"
-                    className="w-full hover:neon-glow-cyan transition-all duration-200"
+                    className="w-full mt-6 hover:neon-glow-cyan transition-all duration-200"
                     onClick={() => handleExploreClick(item.href)}
                     aria-label={`Explore ${item.title}`}
                   >
