@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,9 +17,57 @@ import {
   ArrowDown,
   Play,
   Sparkles,
+  Terminal,
+  Cpu,
+  Layers,
 } from "lucide-react";
 import { MapPin, Calendar, Shield } from "lucide-react";
 
+/* ── Neon Rain ── */
+function NeonRain() {
+  const drops = useMemo(
+    () =>
+      Array.from({ length: 24 }, (_, i) => {
+        const zone = Math.random();
+        const left =
+          zone < 0.35
+            ? Math.random() * 28
+            : zone < 0.65
+            ? 32 + Math.random() * 36
+            : 72 + Math.random() * 28;
+
+        return {
+          id: i,
+          left: `${left}%`,
+          height: `${14 + Math.random() * 10}px`,
+          delay: `${Math.random() * 6}s`,
+          duration: `${2.8 + Math.random() * 1.4}s`,
+          opacity: 0.28 + Math.random() * 0.22,
+        };
+      }),
+    []
+  );
+
+  return (
+    <div className="rain-container">
+      {drops.map((d) => (
+        <div
+          key={d.id}
+          className="raindrop"
+          style={{
+            left: d.left,
+            height: d.height,
+            animationDelay: d.delay,
+            animationDuration: d.duration,
+            opacity: d.opacity,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── Badge Pill ── */
 function BadgePill({
   icon,
   label,
@@ -35,7 +83,7 @@ function BadgePill({
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1
-         text-xs leading-5 backdrop-blur
+         text-xs leading-5 backdrop-blur font-rajdhani tracking-wide uppercase
          ${
            emphasis
              ? "border-primary/50 bg-primary/10 text-foreground"
@@ -48,6 +96,9 @@ function BadgePill({
     </span>
   );
 }
+
+/* ── Quick-link card icons ── */
+const cardIcons = [Terminal, Layers, Cpu];
 
 export const Home = () => {
   const { trackExploreAction, trackCriticalAction } = useGameState();
@@ -109,10 +160,18 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
+      {/* ═══════════ HERO ═══════════ */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-28 sm:pt-32 lg:pt-36">
-        <div className="relative z-10 container mx-auto px-4 text-center">
+        {/* Neon rain behind everything */}
+        <NeonRain />
+
+        {/* Scanline CRT overlay */}
+        <div className="scanline-overlay" />
+
+        {/* Content */}
+        <div className="relative z-10 container mx-auto px-4 text-center crt-flicker">
           <div className="max-w-4xl mx-auto space-y-6">
+            {/* Availability badge */}
             <div className="flex justify-center">
               <Badge
                 variant="secondary"
@@ -124,15 +183,22 @@ export const Home = () => {
               </Badge>
             </div>
 
+            {/* Name + Title */}
             <div className="space-y-4">
-              <h1 className="text-fluid-xl font-bold leading-tight">
-                <span className="gradient-text-primary">{personal.name}</span>
+              <h1 className="font-orbitron font-bold leading-tight text-fluid-xl">
+                <span
+                  className="glitch-text gradient-text-primary"
+                  data-text={personal.name}
+                >
+                  {personal.name}
+                </span>
                 <br />
-                <span className="text-foreground text-shadow-glow">
+                <span className="text-foreground text-shadow-glow font-rajdhani font-semibold tracking-wide">
                   {personal.title}
                 </span>
               </h1>
 
+              {/* Info pills */}
               <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
                 <BadgePill icon="map-pin" label={personal.location} />
                 <BadgePill
@@ -143,40 +209,45 @@ export const Home = () => {
                 <BadgePill icon="shield" label={personal.visa} />
               </div>
 
-              <p className="text-fluid-md text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              {/* Tagline with typing cursor */}
+              <p className="text-fluid-md text-muted-foreground max-w-2xl mx-auto leading-relaxed typing-cursor font-rajdhani">
                 {personal.tagline}
               </p>
             </div>
 
+            {/* Stats with glow */}
             <div className="flex flex-wrap justify-center gap-8 text-center">
-              <div className="space-y-1">
-                <div className="text-2xl font-bold gradient-text-primary">
-                  {stats.yearsExperience}
+              {[
+                {
+                  value: stats.yearsExperience,
+                  label: "Years Experience",
+                  colorClass: "text-[hsl(var(--primary))]",
+                },
+                {
+                  value: stats.projects,
+                  label: "Projects Built",
+                  colorClass: "text-[hsl(var(--secondary))]",
+                },
+                {
+                  value: stats.technologies,
+                  label: "Technologies Used",
+                  colorClass: "text-[hsl(var(--success))]",
+                },
+              ].map((stat) => (
+                <div key={stat.label} className="space-y-1 hud-bracket px-3 py-2">
+                  <div
+                    className={`text-2xl font-orbitron font-bold stat-glow ${stat.colorClass}`}
+                  >
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-muted-foreground font-rajdhani tracking-wider uppercase">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Years Experience
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-2xl font-bold gradient-text-secondary">
-                  {stats.projects}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Projects Built
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-2xl font-bold text-success">
-                  {stats.technologies}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Technologies Used
-                </div>
-              </div>
+              ))}
             </div>
 
+            {/* CTA buttons */}
             <div className="flex flex-wrap justify-center gap-4">
               <LiquidButton
                 variant="cyan"
@@ -186,7 +257,7 @@ export const Home = () => {
                 ariaLabel="Explore my work"
               >
                 <Play className="w-5 h-5" />
-                <span>Explore Work</span>
+                <span className="font-rajdhani font-semibold tracking-wide">Explore Work</span>
               </LiquidButton>
 
               <LiquidButton
@@ -197,7 +268,7 @@ export const Home = () => {
                 ariaLabel="Contact me"
               >
                 <Mail className="w-5 h-5" />
-                <span>Contact Me</span>
+                <span className="font-rajdhani font-semibold tracking-wide">Contact Me</span>
               </LiquidButton>
 
               <LiquidButton
@@ -208,10 +279,11 @@ export const Home = () => {
                 ariaLabel="Download resume"
               >
                 <Download className="w-5 h-5" />
-                <span>Download Resume</span>
+                <span className="font-rajdhani font-semibold tracking-wide">Download Resume</span>
               </LiquidButton>
             </div>
 
+            {/* Social links */}
             <div className="flex flex-col items-center gap-6 pt-4">
               <div className="flex justify-center gap-4">
                 {[
@@ -259,53 +331,65 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Quick Preview Section */}
-      <section id="quests" className="py-20 surface">
+      {/* ═══════════ WHAT I DO ═══════════ */}
+      <section id="quests" className="py-20 surface relative">
+        {/* Circuit trace animated top border */}
+        <div className="circuit-border absolute top-0 left-0 w-full" />
+
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4 gradient-text-primary">
+              <h2 className="text-3xl font-orbitron font-bold mb-4 gradient-text-primary neon-underline">
                 What I Do
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-8 font-rajdhani tracking-wide">
                 Backend systems, AI/ML pipelines, and full-stack web
                 applications — built to scale, tested to ship.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8 items-stretch">
-              {quickLinks.map((item, index) => (
-                <div
-                  key={index}
-                  className="card-game card-surface p-6 rounded-lg hover:scale-105 transition-transform duration-200 h-full flex flex-col"
-                  onMouseEnter={() => ui.play("cardhover")}
-                >
-                  <h3
-                    className={`text-xl font-semibold mb-3 ${
-                      index === 0
-                        ? "gradient-text-primary"
-                        : index === 1
-                        ? "gradient-text-secondary"
-                        : "text-success"
-                    }`}
-                  >
-                    {item.title}
-                  </h3>
+              {quickLinks.map((item, index) => {
+                const IconComp = cardIcons[index] || Terminal;
 
-                  <p className="text-muted-foreground leading-relaxed flex-1">
-                    {item.description}
-                  </p>
-
-                  <Button
-                    variant="outline"
-                    className="w-full mt-6 hover:neon-glow-cyan transition-all duration-200"
-                    onClick={() => handleExploreClick(item.href)}
-                    aria-label={`Explore ${item.title}`}
+                return (
+                  <div
+                    key={index}
+                    className="holo-card card-game card-surface p-6 rounded-lg hover:scale-105 transition-transform duration-200 h-full flex flex-col group"
+                    onMouseEnter={() => ui.play("cardhover")}
                   >
-                    Explore
-                  </Button>
-                </div>
-              ))}
+                    {/* Card icon */}
+                    <div className="mb-4 w-10 h-10 rounded-lg flex items-center justify-center bg-primary/10 border border-primary/20 group-hover:neon-glow-cyan transition-all duration-300">
+                      <IconComp className="w-5 h-5 text-primary" />
+                    </div>
+
+                    <h3
+                      className={`text-xl font-orbitron font-semibold mb-3 ${
+                        index === 0
+                          ? "gradient-text-primary"
+                          : index === 1
+                          ? "gradient-text-secondary"
+                          : "text-success"
+                      }`}
+                    >
+                      {item.title}
+                    </h3>
+
+                    <p className="text-muted-foreground leading-relaxed flex-1 font-rajdhani">
+                      {item.description}
+                    </p>
+
+                    <Button
+                      variant="outline"
+                      className="w-full mt-6 hover:neon-glow-cyan transition-all duration-200 font-rajdhani tracking-wider uppercase"
+                      onClick={() => handleExploreClick(item.href)}
+                      aria-label={`Explore ${item.title}`}
+                    >
+                      Explore
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

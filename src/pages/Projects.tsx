@@ -4,16 +4,52 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useGameState } from "@/components/GameHUD";
 import { useUiSounds } from "@/components/UiSounds";
+import { projects as projectData } from "@/data/resumeData";
 import {
   ExternalLink,
   Github,
-  Code,
-  Smartphone,
   Trophy,
   Zap,
-  Shield,
   Brain,
+  Code,
+  Smartphone,
 } from "lucide-react";
+
+const iconMap: Record<string, any> = {
+  "rag-qa-engine": Brain,
+  "ml-video-extractor": Brain,
+  "ecommerce-spring": Code,
+  "mern-ecommerce": Smartphone,
+};
+
+const accentStyles = [
+  {
+    iconWrap:
+      "border-primary/25 bg-primary/10 group-hover:neon-glow-cyan",
+    icon: "text-primary",
+    title: "group-hover:text-primary",
+  },
+  {
+    iconWrap:
+      "border-secondary/25 bg-secondary/10 group-hover:neon-glow-purple",
+    icon: "text-secondary",
+    title: "group-hover:text-secondary",
+  },
+  {
+    iconWrap:
+      "border-primary/25 bg-primary/10 group-hover:neon-glow-cyan",
+    icon: "text-primary",
+    title: "group-hover:text-primary",
+  },
+  {
+    iconWrap:
+      "border-success/25 bg-success/10 group-hover:neon-glow-green",
+    icon: "text-success",
+    title: "group-hover:text-success",
+  },
+] as const;
+
+type Project = (typeof projectData)[0];
 
 export const Projects = () => {
   const { trackExploreAction, trackCriticalAction, level } = useGameState();
@@ -30,6 +66,7 @@ export const Projects = () => {
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
       window.scrollTo(0, 0);
+
       setTimeout(() => {
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
@@ -47,312 +84,261 @@ export const Projects = () => {
     }
   }, [trackExploreAction]);
 
-  const projects = [
-    {
-      id: "ecommerce-platform",
-      title: "E-Commerce Platform",
-      description:
-        "Full-stack e-commerce solution with payment integration, inventory management, and admin dashboard.",
-      longDescription:
-        "Built a comprehensive e-commerce platform featuring user authentication, product catalog, shopping cart, payment processing with Stripe, order management, and administrative controls. Implemented responsive design and optimized for performance.",
-      image: "/placeholder.svg",
-      tags: ["Spring Boot", "React", "PostgreSQL", "Stripe", "Docker"],
-      demoUrl: "#",
-      repoUrl: "#",
-      difficulty: "Master",
-      xpReward: 200,
-      icon: Code,
-      color: "primary",
-      features: [
-        "User Authentication & Authorization",
-        "Product Catalog with Search & Filters",
-        "Shopping Cart & Wishlist",
-        "Stripe Payment Integration",
-        "Order Management System",
-        "Admin Dashboard",
-        "Responsive Design",
-        "Docker Containerization",
-      ],
-    },
-    {
-      id: "hospital-management",
-      title: "Hospital Management System",
-      description:
-        "HIPAA-compliant healthcare management system with microservices architecture.",
-      longDescription:
-        "Developed a secure, scalable hospital management system following HIPAA guidelines. Features patient records, appointment scheduling, billing, and staff management with role-based access control.",
-      image: "/placeholder.svg",
-      tags: ["Microservices", "PostgreSQL", "Docker", "REST API", "Security"],
-      demoUrl: "#",
-      repoUrl: "#",
-      difficulty: "Master",
-      xpReward: 200,
-      icon: Shield,
-      color: "secondary",
-      features: [
-        "HIPAA Compliance",
-        "Microservices Architecture",
-        "Patient Record Management",
-        "Appointment Scheduling",
-        "Billing System",
-        "Role-based Access Control",
-        "REST API Design",
-        "Security Implementation",
-      ],
-    },
-    {
-      id: "mern-ecommerce",
-      title: "MERN E-Commerce App",
-      description:
-        "Modern e-commerce application built with MERN stack and PayPal integration.",
-      longDescription:
-        "Created a full-featured e-commerce application using MongoDB, Express.js, React, and Node.js. Integrated PayPal for payments and Cloudinary for image management.",
-      image: "/placeholder.svg",
-      tags: ["React", "Node.js", "MongoDB", "PayPal", "JWT", "Cloudinary"],
-      demoUrl: "#",
-      repoUrl: "#",
-      difficulty: "Adept",
-      xpReward: 150,
-      icon: Smartphone,
-      color: "success",
-      features: [
-        "MERN Stack Development",
-        "PayPal Payment Gateway",
-        "JWT Authentication",
-        "Image Upload with Cloudinary",
-        "Product Reviews & Ratings",
-        "Order Tracking",
-        "Admin Panel",
-        "Responsive UI",
-      ],
-    },
-    {
-      id: "ai-analytics",
-      title: "AI Analytics Dashboard",
-      description:
-        "Machine learning-powered analytics platform with real-time data visualization.",
-      longDescription:
-        "Built an AI-driven analytics dashboard using Python, TensorFlow, and React. Features predictive analytics, real-time data processing, and interactive visualizations.",
-      image: "/placeholder.svg",
-      tags: ["Python", "TensorFlow", "FastAPI", "React", "Machine Learning"],
-      demoUrl: "#",
-      repoUrl: "#",
-      difficulty: "Master",
-      xpReward: 200,
-      icon: Brain,
-      color: "primary",
-      features: [
-        "Machine Learning Models",
-        "Real-time Data Processing",
-        "Interactive Visualizations",
-        "Predictive Analytics",
-        "FastAPI Backend",
-        "TensorFlow Integration",
-        "Data Pipeline",
-        "Dashboard UI",
-      ],
-    },
-  ];
+  const getDifficulty = (project: Project) =>
+    project.featured ? "Master" : "Adept";
 
-  const handleProjectView = (projectId: string, xpReward: number) => {
-    ui.play("cardclick");
-    if (!viewedProjects.includes(projectId)) {
-      setViewedProjects((prev) => [...prev, projectId]);
-      const projectTitle = projects.find((p) => p.id === projectId)?.title;
-      trackCriticalAction(`Viewed project: ${projectTitle}`);
+  const getXp = (project: Project) => (project.featured ? 200 : 150);
+
+  const getDifficultyClasses = (difficulty: string) => {
+    switch (difficulty) {
+      case "Master":
+        return "border-destructive/40 bg-destructive/5 text-destructive";
+      case "Adept":
+        return "border-warning/40 bg-warning/5 text-warning";
+      default:
+        return "border-secondary/30 bg-secondary/10 text-secondary";
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "Novice":
-        return "success";
-      case "Adept":
-        return "warning";
-      case "Master":
-        return "destructive";
-      default:
-        return "secondary";
+  const handleProjectView = (projectId: string) => {
+    ui.play("cardclick");
+
+    if (!viewedProjects.includes(projectId)) {
+      setViewedProjects((prev) => [...prev, projectId]);
+      const projectTitle = projectData.find((p) => p.id === projectId)?.title;
+      trackCriticalAction(`Viewed project: ${projectTitle}`);
     }
   };
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section — translucent */}
-      <section className="py-20 pt-24 surface-strong">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
+      {/* ═══════════ HERO ═══════════ */}
+      <section className="relative overflow-hidden pt-28 sm:pt-32 lg:pt-36 surface-strong">
+        <div className="scanline-overlay" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,245,255,0.08),transparent_38%),radial-gradient(circle_at_bottom,rgba(217,70,239,0.07),transparent_34%)]" />
+
+        <div className="container relative z-10 mx-auto px-4 py-20">
+          <div className="mx-auto max-w-4xl text-center">
             <Badge
               variant="secondary"
-              className="neon-glow-cyan mb-6 px-4 py-2"
+              className="neon-glow-purple mb-6 px-5 py-2 text-sm font-rajdhani tracking-wider uppercase"
               onMouseEnter={() => ui.play("hover")}
             >
-              <Trophy className="w-4 h-4 mr-2" />
+              <Trophy className="mr-2 h-4 w-4" />
               Quest Archive Accessed
             </Badge>
 
             <h1
               id="projects-title"
               tabIndex={-1}
-              className="section-title text-fluid-xl font-bold mb-6"
+              className="mb-6 text-fluid-xl font-orbitron font-bold"
             >
-              Completed Quests
+              <span
+                className="glitch-text gradient-text-primary"
+                data-text="Completed Quests"
+              >
+                Completed Quests
+              </span>
             </h1>
 
-            <p className="text-fluid-md text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Explore the digital realms I've conquered. Each project represents
-              a unique challenge, innovative solutions, and lessons learned in
-              the art of software development.
+            <p className="mx-auto max-w-3xl text-fluid-md leading-relaxed text-muted-foreground font-rajdhani">
+              Explore the digital realms I&apos;ve conquered. Each project
+              represents a unique challenge, deliberate engineering choices, and
+              practical lessons learned while building production-ready software.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Projects Grid — translucent */}
-      <section className="py-20 surface">
-        <div className="container mx-auto px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
-              {projects.map((project) => (
-                <Card
-                  key={project.id}
-                  className="card-game card-surface p-6 hover:scale-105 transition-all duration-300 group"
-                  onMouseEnter={() => ui.play("cardhover")}
-                >
-                  {/* Project Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center neon-glow-${project.color} group-hover:scale-110 transition-transform`}
-                    >
-                      <project.icon className="w-6 h-6 text-primary" />
-                    </div>
+      {/* ═══════════ PROJECT GRID ═══════════ */}
+      <section className="relative py-20 surface">
+        <div className="circuit-border absolute left-0 top-0 w-full" />
 
-                    <div className="flex gap-2">
-                      <Badge
-                        variant="outline"
-                        className={`border-${getDifficultyColor(
-                          project.difficulty
-                        )} text-${getDifficultyColor(project.difficulty)}`}
-                        onMouseEnter={() => ui.play("hover")}
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid items-stretch gap-8 md:grid-cols-2">
+              {projectData.map((project, index) => {
+                const IconComp = iconMap[project.id] || Code;
+                const difficulty = getDifficulty(project);
+                const xp = getXp(project);
+                const accent = accentStyles[index % accentStyles.length];
+
+                return (
+                  <Card
+                    key={project.id}
+                    className="group holo-card card-game card-surface h-full rounded-2xl p-6 sm:p-7 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+                    onMouseEnter={() => ui.play("cardhover")}
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-4">
+                      <div
+                        className={`flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300 ${accent.iconWrap}`}
                       >
-                        {project.difficulty}
-                      </Badge>
-                      <Badge
-                        variant="secondary"
-                        className="text-xs"
-                        onMouseEnter={() => ui.play("hover")}
-                      >
-                        <Zap className="w-3 h-3 mr-1" />+{project.xpReward} XP
-                      </Badge>
-                    </div>
-                  </div>
+                        <IconComp className={`h-6 w-6 ${accent.icon}`} />
+                      </div>
 
-                  {/* Project Content */}
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {project.title}
-                    </h3>
-
-                    <p className="text-muted-foreground leading-relaxed">
-                      {project.description}
-                    </p>
-
-                    {/* Tech Stack */}
-                    <div className="flex flex-wrap gap-2">
-                      {project.tags.map((tag, index) => (
+                      <div className="flex flex-wrap justify-end gap-2">
                         <Badge
-                          key={index}
                           variant="outline"
-                          className="text-xs"
+                          className={`px-3 py-1 font-rajdhani tracking-wide ${getDifficultyClasses(
+                            difficulty
+                          )}`}
                           onMouseEnter={() => ui.play("hover")}
                         >
-                          {tag}
+                          {difficulty}
                         </Badge>
-                      ))}
-                    </div>
 
-                    {/* Key Features */}
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-foreground">
-                        Key Features:
-                      </h4>
-                      <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
-                        {project.features.slice(0, 4).map((feature, index) => (
-                          <div key={index} className="flex items-center gap-1">
-                            <div className="w-1 h-1 bg-primary rounded-full" />
-                            {feature}
-                          </div>
-                        ))}
+                        <Badge
+                          variant="secondary"
+                          className="border border-white/10 bg-secondary/85 px-3 py-1 text-xs font-rajdhani tracking-wide text-secondary-foreground"
+                          onMouseEnter={() => ui.play("hover")}
+                        >
+                          <Zap className="mr-1.5 h-3.5 w-3.5" />+{xp} XP
+                        </Badge>
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-3 pt-4">
-                      <Button
-                        size="sm"
-                        className="flex-1"
-                        onClick={() =>
-                          handleProjectView(project.id, project.xpReward)
-                        }
-                        onMouseEnter={() => ui.play("hover")}
+                    {/* Body */}
+                    <div className="mt-5 flex flex-1 flex-col">
+                      <h3
+                        className={`text-2xl font-orbitron font-semibold text-foreground transition-colors duration-300 ${accent.title}`}
                       >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        View Quest
-                      </Button>
+                        {project.title}
+                      </h3>
 
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => ui.play("click")}
-                        onMouseEnter={() => ui.play("hover")}
-                      >
-                        <Github className="w-4 h-4" />
-                      </Button>
+                      <p className="mt-4 text-[1.05rem] leading-relaxed text-muted-foreground font-rajdhani">
+                        {project.description}
+                      </p>
+
+                      {/* Tech stack */}
+                      <div className="mt-5 flex min-h-[72px] flex-wrap content-start gap-2">
+                        {project.tech.map((tag, tagIndex) => (
+                          <Badge
+                            key={tagIndex}
+                            variant="outline"
+                            className="rounded-full border-white/10 bg-background/30 px-3 py-1 text-xs font-rajdhani tracking-wide text-foreground/95"
+                            onMouseEnter={() => ui.play("hover")}
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+
+                      {/* Key features */}
+                      <div className="mt-5 min-h-[104px] space-y-3">
+                        <h4 className="text-sm font-semibold uppercase tracking-wider text-foreground font-rajdhani">
+                          Key Features
+                        </h4>
+
+                        <div className="grid grid-cols-1 gap-x-8 gap-y-2 text-sm text-muted-foreground sm:grid-cols-2">
+                          {project.features.slice(0, 4).map((feature, featureIndex) => (
+                            <div
+                              key={featureIndex}
+                              className="flex items-start gap-2 font-rajdhani"
+                            >
+                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
+                              <span>{feature}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Footer / Actions */}
+                      <div className="mt-auto flex gap-3 pt-6">
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-rajdhani tracking-wider uppercase shadow-[0_0_22px_hsl(var(--primary)/0.30)]"
+                          onClick={() => handleProjectView(project.id)}
+                          onMouseEnter={() => ui.play("hover")}
+                          aria-label={`Explore project ${project.title}`}
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Explore Project
+                        </Button>
+
+                        {project.github ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-white/10 bg-background/35 hover:bg-background/60"
+                            onClick={() => ui.play("click")}
+                            onMouseEnter={() => ui.play("hover")}
+                            asChild
+                          >
+                            <a
+                              href={project.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`Open source for ${project.title}`}
+                            >
+                              <Github className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-white/10 bg-background/35 opacity-50"
+                            onMouseEnter={() => ui.play("hover")}
+                            disabled
+                            aria-label={`Source unavailable for ${project.title}`}
+                          >
+                            <Github className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Achievement Section — translucent/strong */}
-      <section className="py-20 surface-strong">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-8 gradient-text-secondary">
+      {/* ═══════════ STATS ═══════════ */}
+      <section className="relative py-20 surface-strong">
+        <div className="circuit-border absolute left-0 top-0 w-full opacity-70" />
+
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="mx-auto max-w-5xl text-center">
+            <h2 className="mb-12 text-3xl sm:text-4xl font-orbitron font-bold gradient-text-secondary neon-underline">
               Quest Statistics
             </h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="space-y-2">
-                <div className="text-2xl font-bold gradient-text-primary">
-                  {projects.length}
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+              <div className="space-y-2 hud-bracket px-3 py-2">
+                <div className="text-3xl font-orbitron font-bold gradient-text-primary stat-glow">
+                  {projectData.length}
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
                   Completed Quests
                 </div>
               </div>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-success">15+</div>
-                <div className="text-sm text-muted-foreground">
+
+              <div className="space-y-2 hud-bracket px-3 py-2">
+                <div className="text-3xl font-orbitron font-bold text-success stat-glow">
+                  20+
+                </div>
+                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
                   Technologies Used
                 </div>
               </div>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold gradient-text-secondary">
+
+              <div className="space-y-2 hud-bracket px-3 py-2">
+                <div className="text-3xl font-orbitron font-bold gradient-text-secondary stat-glow">
                   {viewedProjects.length}
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Quests Explored
+                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
+                  Projects Explored
                 </div>
               </div>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-warning">
+
+              <div className="space-y-2 hud-bracket px-3 py-2">
+                <div className="text-3xl font-orbitron font-bold text-warning stat-glow">
                   Level {level}
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
                   Current Rank
                 </div>
               </div>

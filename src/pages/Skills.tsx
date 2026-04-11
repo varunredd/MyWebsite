@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,14 +9,134 @@ import {
   Code2,
   Database,
   Cloud,
-  Smartphone,
   Brain,
   Zap,
   Star,
   ChevronDown,
   ChevronUp,
   Award,
+  Server,
+  Sparkles,
+  Lock,
 } from "lucide-react";
+
+type SkillCategory = {
+  id: string;
+  title: string;
+  description: string;
+  icon: any;
+  requiredLevel: number;
+  mastery: number;
+  skills: { name: string; level: number; experience: string }[];
+  projects: string[];
+};
+
+const skillCategories: SkillCategory[] = [
+  {
+    id: "backend",
+    title: "Backend Development",
+    description: "Building robust server-side applications and microservices",
+    icon: Server,
+    requiredLevel: 1,
+    mastery: 90,
+    skills: [
+      { name: "Spring Boot", level: 90, experience: "2+ years" },
+      { name: "Spring Security / OAuth 2.0", level: 85, experience: "2+ years" },
+      { name: "FastAPI", level: 80, experience: "1+ years" },
+      { name: "Node.js/Express", level: 80, experience: "2+ years" },
+      { name: "REST / GraphQL APIs", level: 90, experience: "2+ years" },
+      { name: "Microservices", level: 85, experience: "2+ years" },
+    ],
+    projects: ["E-Commerce Platform", "Duke Energy APIs", "Hospital Mgmt"],
+  },
+  {
+    id: "frontend",
+    title: "Frontend Development",
+    description: "Creating responsive, interactive user interfaces",
+    icon: Code2,
+    requiredLevel: 1,
+    mastery: 80,
+    skills: [
+      { name: "React.js", level: 85, experience: "2+ years" },
+      { name: "TypeScript", level: 80, experience: "2+ years" },
+      { name: "Redux Toolkit", level: 75, experience: "1+ years" },
+      { name: "Tailwind CSS", level: 80, experience: "1+ years" },
+      { name: "Next.js", level: 70, experience: "1+ years" },
+    ],
+    projects: ["E-Commerce Apps", "RAG Q&A Frontend", "Portfolio"],
+  },
+  {
+    id: "ai",
+    title: "AI & Machine Learning",
+    description: "Building RAG pipelines, embedding search, and ML-powered tools",
+    icon: Brain,
+    requiredLevel: 1,
+    mastery: 80,
+    skills: [
+      { name: "Python (ML)", level: 85, experience: "2+ years" },
+      { name: "LangChain / RAG", level: 80, experience: "1+ years" },
+      { name: "PyTorch", level: 75, experience: "1+ years" },
+      { name: "Hugging Face / Transformers", level: 75, experience: "1+ years" },
+      { name: "CLIP / FAISS", level: 75, experience: "1+ years" },
+      { name: "Sentence Transformers", level: 75, experience: "1+ years" },
+    ],
+    projects: ["RAG Q&A Engine", "ML Video Extractor", "Duke Energy ML"],
+  },
+  {
+    id: "database",
+    title: "Data & Storage",
+    description: "Designing and optimizing data storage solutions",
+    icon: Database,
+    requiredLevel: 1,
+    mastery: 85,
+    skills: [
+      { name: "PostgreSQL", level: 90, experience: "2+ years" },
+      { name: "MongoDB", level: 80, experience: "2+ years" },
+      { name: "Redis", level: 80, experience: "2+ years" },
+      { name: "Elasticsearch", level: 65, experience: "1+ years" },
+      { name: "Apache Kafka", level: 60, experience: "<1 year" },
+    ],
+    projects: ["E-Commerce Platform", "Hospital Mgmt", "RAG Q&A Engine"],
+  },
+  {
+    id: "cloud",
+    title: "Cloud & DevOps",
+    description: "Deploying and scaling applications in the cloud",
+    icon: Cloud,
+    requiredLevel: 1,
+    mastery: 75,
+    skills: [
+      { name: "AWS (EC2, S3, Lambda, SageMaker)", level: 75, experience: "2+ years" },
+      { name: "Docker", level: 80, experience: "2+ years" },
+      { name: "GitHub Actions", level: 75, experience: "1+ years" },
+      { name: "Jenkins", level: 70, experience: "1+ years" },
+    ],
+    projects: ["Brane Microservices", "E-Commerce Platform"],
+  },
+];
+
+const accentStyles = [
+  {
+    iconWrap: "border-primary/25 bg-primary/10 group-hover:neon-glow-cyan",
+    icon: "text-primary",
+  },
+  {
+    iconWrap: "border-secondary/25 bg-secondary/10 group-hover:neon-glow-purple",
+    icon: "text-secondary",
+  },
+  {
+    iconWrap: "border-primary/25 bg-primary/10 group-hover:neon-glow-cyan",
+    icon: "text-primary",
+  },
+  {
+    iconWrap: "border-success/25 bg-success/10 group-hover:neon-glow-green",
+    icon: "text-success",
+  },
+  {
+    iconWrap: "border-warning/25 bg-warning/10",
+    icon: "text-warning",
+  },
+] as const;
 
 export const Skills = () => {
   const { trackExploreAction, trackCriticalAction, level } = useGameState();
@@ -27,7 +147,6 @@ export const Skills = () => {
   useEffect(() => {
     trackExploreAction("Skills");
 
-    // keep your existing scroll logic
     const state = history.state as any;
     const scrollTargetId = state?.usr?.scrollTargetId || state?.scrollTargetId;
 
@@ -52,128 +171,31 @@ export const Skills = () => {
     }
   }, [trackExploreAction]);
 
-  // ---- Skills config (unchanged) ----
-  const skillCategories = [
-    {
-      id: "frontend",
-      title: "Frontend Development",
-      description: "Creating beautiful, responsive user interfaces",
-      icon: Code2,
-      color: "primary",
-      requiredLevel: 1,
-      mastery: 90,
-      skills: [
-        { name: "React", level: 95, experience: "4+ years" },
-        { name: "TypeScript", level: 90, experience: "3+ years" },
-        { name: "JavaScript", level: 95, experience: "5+ years" },
-        { name: "Tailwind CSS", level: 85, experience: "2+ years" },
-        { name: "Next.js", level: 80, experience: "2+ years" },
-        { name: "HTML/CSS", level: 95, experience: "5+ years" },
-      ],
-      projects: ["E-Commerce Platform", "MERN E-Commerce", "Portfolio Website"],
-    },
-    {
-      id: "backend",
-      title: "Backend Development",
-      description: "Building robust server-side applications",
-      icon: Database,
-      color: "secondary",
-      requiredLevel: 1,
-      mastery: 85,
-      skills: [
-        { name: "Node.js", level: 90, experience: "4+ years" },
-        { name: "Spring Boot", level: 85, experience: "3+ years" },
-        { name: "Express.js", level: 90, experience: "4+ years" },
-        { name: "REST APIs", level: 95, experience: "4+ years" },
-        { name: "GraphQL", level: 75, experience: "2+ years" },
-        { name: "Microservices", level: 80, experience: "2+ years" },
-      ],
-      projects: ["Hospital Management", "E-Commerce API", "Analytics Backend"],
-    },
-    {
-      id: "database",
-      title: "Database Management",
-      description: "Designing and optimizing data storage solutions",
-      icon: Database,
-      color: "success",
-      requiredLevel: 2,
-      mastery: 80,
-      skills: [
-        { name: "PostgreSQL", level: 90, experience: "3+ years" },
-        { name: "MongoDB", level: 85, experience: "3+ years" },
-        { name: "Redis", level: 75, experience: "2+ years" },
-        { name: "SQL Optimization", level: 80, experience: "3+ years" },
-        { name: "Database Design", level: 85, experience: "3+ years" },
-      ],
-      projects: [
-        "Hospital Management",
-        "E-Commerce Platform",
-        "Analytics Dashboard",
-      ],
-    },
-    {
-      id: "cloud",
-      title: "Cloud & DevOps",
-      description: "Deploying and scaling applications in the cloud",
-      icon: Cloud,
-      color: "warning",
-      requiredLevel: 2,
-      mastery: 75,
-      skills: [
-        { name: "AWS", level: 80, experience: "2+ years" },
-        { name: "Docker", level: 85, experience: "3+ years" },
-        { name: "Kubernetes", level: 70, experience: "1+ years" },
-        { name: "CI/CD", level: 80, experience: "2+ years" },
-        { name: "Terraform", level: 65, experience: "1+ years" },
-      ],
-      projects: ["Hospital Management", "E-Commerce Platform", "AI Analytics"],
-    },
-    {
-      id: "mobile",
-      title: "Mobile Development",
-      description: "Creating native and cross-platform mobile apps",
-      icon: Smartphone,
-      color: "destructive",
-      requiredLevel: 3,
-      mastery: 70,
-      skills: [
-        { name: "React Native", level: 80, experience: "2+ years" },
-        { name: "Android (Java)", level: 75, experience: "2+ years" },
-        { name: "iOS (Swift)", level: 65, experience: "1+ years" },
-        { name: "Flutter", level: 60, experience: "1+ years" },
-      ],
-      projects: ["Mobile E-Commerce", "Health Tracker App", "Task Manager"],
-    },
-    {
-      id: "ai",
-      title: "AI & Machine Learning",
-      description: "Building intelligent systems and data-driven solutions",
-      icon: Brain,
-      color: "primary",
-      requiredLevel: 3,
-      mastery: 75,
-      skills: [
-        { name: "Python", level: 85, experience: "3+ years" },
-        { name: "TensorFlow", level: 75, experience: "2+ years" },
-        { name: "PyTorch", level: 70, experience: "1+ years" },
-        { name: "Scikit-learn", level: 80, experience: "2+ years" },
-        { name: "Data Analysis", level: 85, experience: "3+ years" },
-      ],
-      projects: ["AI Analytics Dashboard", "Prediction Engine", "NLP Chatbot"],
-    },
-  ];
+  const restrictionsActive = level >= 3;
 
-  // ✅ Unlock policy: levels < 3 — everything unlocked; levels >= 3 — gate by requiredLevel
   useEffect(() => {
-    const restrictionsActive = level >= 3;
     const unlocked = restrictionsActive
       ? skillCategories.filter((c) => level >= c.requiredLevel).map((c) => c.id)
       : skillCategories.map((c) => c.id);
+
     setUnlockedSkills(unlocked);
-  }, [level]);
+  }, [level, restrictionsActive]);
+
+  const stats = useMemo(
+    () => ({
+      total: skillCategories.length,
+      mastered: unlockedSkills.length,
+      avgMastery: Math.round(
+        skillCategories.reduce((acc, item) => acc + item.mastery, 0) /
+          skillCategories.length
+      ),
+    }),
+    [unlockedSkills]
+  );
 
   const handleSkillUnlock = (skillId: string) => {
     ui.play("cardclick");
+
     if (!unlockedSkills.includes(skillId)) {
       const skillTitle = skillCategories.find((s) => s.id === skillId)?.title;
       trackCriticalAction(`Skill Unlocked: ${skillTitle}`);
@@ -183,173 +205,146 @@ export const Skills = () => {
 
   const toggleSkillExpansion = (skillId: string) => {
     ui.play("click");
-    setExpandedSkill(expandedSkill === skillId ? null : skillId);
+    setExpandedSkill((prev) => (prev === skillId ? null : skillId));
   };
-
-  const restrictionsActive = level >= 3;
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section (translucent) */}
-      <section className="surface-strong pt-24 pb-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
+      {/* ═══════════ HERO ═══════════ */}
+      <section className="relative overflow-hidden pt-28 sm:pt-32 lg:pt-36 surface-strong">
+        <div className="scanline-overlay" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,245,255,0.08),transparent_38%),radial-gradient(circle_at_bottom,rgba(217,70,239,0.07),transparent_34%)]" />
+
+        <div className="container relative z-10 mx-auto px-4 py-20">
+          <div className="mx-auto max-w-4xl text-center">
             <Badge
               variant="secondary"
-              className="neon-glow-green mb-6 px-4 py-2"
+              className="neon-glow-purple mb-6 px-5 py-2 text-sm font-rajdhani tracking-wider uppercase"
               onMouseEnter={() => ui.play("hover")}
             >
-              <Star className="w-4 h-4 mr-2" />
+              <Sparkles className="mr-2 h-4 w-4" />
               Skill Tree Accessed
             </Badge>
 
-            <h1
-              id="skills-title"
-              tabIndex={-1}
-              className="section-title text-fluid-xl font-bold mb-6"
-            >
-              Skill Tree
+            <h1 className="mb-6 text-fluid-xl font-orbitron font-bold">
+              <span
+                className="glitch-text gradient-text-primary"
+                data-text="Ability Tree"
+              >
+                Ability Tree
+              </span>
             </h1>
 
-            <p className="text-fluid-md text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Navigate through my technical abilities and expertise. Each skill
-              represents mastery gained through real-world projects and
-              continuous learning.
+            <p className="mx-auto max-w-3xl text-fluid-md leading-relaxed text-muted-foreground font-rajdhani">
+              A comprehensive overview of my technical abilities, organized by
+              domain. Each skill has been leveled up through real-world projects
+              and professional experience.
             </p>
-
-            <div className="mt-8 flex justify-center gap-8">
-              <div
-                className="text-center"
-                onMouseEnter={() => ui.play("hover")}
-              >
-                <div className="text-2xl font-bold gradient-text-primary">
-                  Level {level}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Current Rank
-                </div>
-              </div>
-              <div
-                className="text-center"
-                onMouseEnter={() => ui.play("hover")}
-              >
-                <div className="text-2xl font-bold text-success">
-                  {unlockedSkills.length}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Skills Unlocked
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Skill Tree (translucent) */}
-      <section className="surface py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {skillCategories.map((category) => {
-                const isLocked = restrictionsActive
-                  ? level < category.requiredLevel
-                  : false;
+      {/* ═══════════ SKILLS GRID ═══════════ */}
+      <section className="relative py-16 surface">
+        <div className="circuit-border absolute left-0 top-0 w-full" />
 
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid items-start gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {skillCategories.map((category, index) => {
                 const isUnlocked = unlockedSkills.includes(category.id);
+                const isLocked =
+                  restrictionsActive && level < category.requiredLevel;
                 const isExpanded = expandedSkill === category.id;
+                const accent = accentStyles[index % accentStyles.length];
+                const Icon = category.icon;
 
                 return (
                   <Card
                     key={category.id}
-                    className={`card-game card-surface p-6 transition-all duration-300 ${
+                    className={`group holo-card card-game card-surface rounded-2xl p-6 transition-all duration-300 ${
                       isLocked
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:scale-105 cursor-pointer"
-                    } ${isUnlocked ? "neon-glow-cyan" : ""}`}
+                        ? "opacity-55 cursor-not-allowed"
+                        : "hover:-translate-y-1 cursor-pointer"
+                    }`}
                     onMouseEnter={() => ui.play("cardhover")}
                     onClick={() => {
                       if (!isLocked) toggleSkillExpansion(category.id);
                     }}
                   >
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start justify-between gap-4">
                       <div
-                        className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                          isLocked ? "bg-muted" : `neon-glow-${category.color}`
+                        className={`flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300 ${
+                          isLocked
+                            ? "border-white/10 bg-muted/40"
+                            : accent.iconWrap
                         }`}
                       >
-                        <category.icon
-                          className={`w-6 h-6 ${
-                            isLocked ? "text-muted-foreground" : "text-primary"
+                        <Icon
+                          className={`h-6 w-6 ${
+                            isLocked ? "text-muted-foreground" : accent.icon
                           }`}
                         />
                       </div>
 
                       <div className="flex flex-col items-end gap-2">
-                        {isLocked && (
+                        {isLocked ? (
                           <Badge
                             variant="outline"
-                            className="text-xs"
-                            onMouseEnter={() => ui.play("hover")}
+                            className="border-white/10 bg-background/30 px-3 py-1 text-xs font-rajdhani tracking-wide"
                           >
-                            Level {category.requiredLevel} Required
+                            <Lock className="mr-1.5 h-3 w-3" />
+                            Level {category.requiredLevel}
                           </Badge>
-                        )}
-                        {isUnlocked && (
+                        ) : (
                           <Badge
                             variant="secondary"
-                            className="text-xs"
-                            onMouseEnter={() => ui.play("hover")}
+                            className="border border-white/10 bg-secondary/85 px-3 py-1 text-xs font-rajdhani tracking-wide text-secondary-foreground"
                           >
-                            <Award className="w-3 h-3 mr-1" />
+                            <Award className="mr-1.5 h-3 w-3" />
                             Mastered
                           </Badge>
                         )}
+
                         {!isLocked && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="p-0 h-auto"
+                            className="h-7 p-0 text-muted-foreground hover:text-foreground"
                             onClick={(e) => {
                               e.stopPropagation();
-                              ui.play("click");
                               toggleSkillExpansion(category.id);
                             }}
-                            onMouseEnter={() => ui.play("hover")}
                           >
                             {isExpanded ? (
-                              <ChevronUp className="w-4 h-4" />
+                              <ChevronUp className="h-4 w-4" />
                             ) : (
-                              <ChevronDown className="w-4 h-4" />
+                              <ChevronDown className="h-4 w-4" />
                             )}
                           </Button>
                         )}
                       </div>
                     </div>
 
-                    {/* Body */}
-                    <div className="space-y-4">
-                      <div>
+                    <div className="mt-5 space-y-4">
+                      <div className="min-h-[104px]">
                         <h3
-                          className={`text-lg font-semibold ${
-                            isLocked
-                              ? "text-muted-foreground"
-                              : "text-foreground"
+                          className={`text-2xl font-orbitron font-semibold ${
+                            isLocked ? "text-muted-foreground" : "text-foreground"
                           }`}
                         >
                           {category.title}
                         </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
+
+                        <p className="mt-3 text-[1.05rem] leading-relaxed text-muted-foreground font-rajdhani">
                           {category.description}
                         </p>
                       </div>
 
                       {!isLocked && (
                         <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">
-                              Mastery
-                            </span>
+                          <div className="flex items-center justify-between text-sm font-rajdhani">
+                            <span className="text-muted-foreground">Mastery</span>
                             <span className="text-foreground">
                               {category.mastery}%
                             </span>
@@ -359,38 +354,43 @@ export const Skills = () => {
                       )}
 
                       {isExpanded && !isLocked && (
-                        <div className="space-y-3 pt-4 border-t border-card-border/60">
-                          <h4 className="text-sm font-medium text-foreground">
-                            Skills:
-                          </h4>
-                          {category.skills.map((skill, index) => (
-                            <div key={index} className="space-y-1">
-                              <div className="flex justify-between text-sm">
-                                <span className="text-foreground">
-                                  {skill.name}
-                                </span>
-                                <span className="text-muted-foreground">
-                                  {skill.level}%
-                                </span>
+                        <div className="space-y-4 border-t border-card-border/60 pt-5">
+                          <div className="space-y-3">
+                            <h4 className="text-sm font-semibold uppercase tracking-wider text-foreground font-rajdhani">
+                              Skills
+                            </h4>
+
+                            {category.skills.map((skill, skillIndex) => (
+                              <div key={skillIndex} className="space-y-1.5">
+                                <div className="flex items-center justify-between gap-3 text-sm font-rajdhani">
+                                  <span className="text-foreground">
+                                    {skill.name}
+                                  </span>
+                                  <span className="text-muted-foreground">
+                                    {skill.level}%
+                                  </span>
+                                </div>
+
+                                <Progress value={skill.level} className="h-1.5" />
+
+                                <div className="text-xs text-muted-foreground font-rajdhani">
+                                  {skill.experience}
+                                </div>
                               </div>
-                              <Progress value={skill.level} className="h-1" />
-                              <div className="text-xs text-muted-foreground">
-                                {skill.experience}
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
 
                           <div className="pt-2">
-                            <h5 className="text-xs font-medium text-foreground mb-2">
-                              Used in:
+                            <h5 className="mb-2 text-sm font-semibold uppercase tracking-wider text-foreground font-rajdhani">
+                              Used In
                             </h5>
-                            <div className="flex flex-wrap gap-1">
-                              {category.projects.map((project, index) => (
+
+                            <div className="flex flex-wrap gap-2">
+                              {category.projects.map((project, projectIndex) => (
                                 <Badge
-                                  key={index}
+                                  key={projectIndex}
                                   variant="outline"
-                                  className="text-xs"
-                                  onMouseEnter={() => ui.play("hover")}
+                                  className="rounded-full border-white/10 bg-background/30 px-3 py-1 text-xs font-rajdhani tracking-wide"
                                 >
                                   {project}
                                 </Badge>
@@ -401,15 +401,14 @@ export const Skills = () => {
                           {!isUnlocked && (
                             <Button
                               size="sm"
-                              className="w-full mt-4"
+                              className="mt-2 w-full font-rajdhani tracking-wider uppercase"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleSkillUnlock(category.id);
                               }}
-                              onMouseEnter={() => ui.play("hover")}
                             >
-                              <Zap className="w-4 h-4 mr-2" />
-                              Unlock Skill (+100 XP)
+                              <Zap className="mr-2 h-4 w-4" />
+                              Unlock Skill
                             </Button>
                           )}
                         </div>
@@ -423,34 +422,82 @@ export const Skills = () => {
         </div>
       </section>
 
-      {/* Legend (translucent) */}
-      <section className="surface py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-8 gradient-text-secondary">
+      {/* ═══════════ LEGEND / STATS ═══════════ */}
+      <section className="relative py-14 surface-strong">
+        <div className="circuit-border absolute left-0 top-0 w-full opacity-70" />
+
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="mx-auto max-w-5xl text-center">
+            <h2 className="mb-10 text-3xl sm:text-4xl font-orbitron font-bold gradient-text-secondary neon-underline">
               Skill Tree Legend
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="mb-12 grid grid-cols-2 gap-6 md:grid-cols-4">
+              <div className="space-y-2 hud-bracket px-3 py-2">
+                <div className="text-3xl font-orbitron font-bold gradient-text-primary stat-glow">
+                  {stats.total}
+                </div>
+                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
+                  Skill Domains
+                </div>
+              </div>
+
+              <div className="space-y-2 hud-bracket px-3 py-2">
+                <div className="text-3xl font-orbitron font-bold text-success stat-glow">
+                  {stats.mastered}
+                </div>
+                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
+                  Unlocked
+                </div>
+              </div>
+
+              <div className="space-y-2 hud-bracket px-3 py-2">
+                <div className="text-3xl font-orbitron font-bold gradient-text-secondary stat-glow">
+                  {stats.avgMastery}%
+                </div>
+                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
+                  Avg Mastery
+                </div>
+              </div>
+
+              <div className="space-y-2 hud-bracket px-3 py-2">
+                <div className="text-3xl font-orbitron font-bold text-warning stat-glow">
+                  Level {level}
+                </div>
+                <div className="text-sm uppercase tracking-wider text-muted-foreground font-rajdhani">
+                  Current Rank
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <div className="space-y-2" onMouseEnter={() => ui.play("hover")}>
-                <div className="w-8 h-8 rounded bg-muted mx-auto" />
-                <div className="text-sm font-medium">Locked</div>
-                <div className="text-xs text-muted-foreground">
+                <div className="mx-auto h-10 w-10 rounded-xl bg-muted/50 border border-white/10" />
+                <div className="text-base font-semibold text-foreground font-rajdhani">
+                  Locked
+                </div>
+                <div className="text-sm text-muted-foreground font-rajdhani">
                   Level requirement not met
                 </div>
               </div>
+
               <div className="space-y-2" onMouseEnter={() => ui.play("hover")}>
-                <div className="w-8 h-8 rounded neon-glow-cyan mx-auto" />
-                <div className="text-sm font-medium">Available</div>
-                <div className="text-xs text-muted-foreground">
-                  Can be explored
+                <div className="mx-auto h-10 w-10 rounded-xl border border-primary/25 bg-background/35 neon-glow-cyan" />
+                <div className="text-base font-semibold text-foreground font-rajdhani">
+                  Available
+                </div>
+                <div className="text-sm text-muted-foreground font-rajdhani">
+                  Ready to explore
                 </div>
               </div>
+
               <div className="space-y-2" onMouseEnter={() => ui.play("hover")}>
-                <div className="w-8 h-8 rounded neon-glow-green mx-auto" />
-                <div className="text-sm font-medium">Mastered</div>
-                <div className="text-xs text-muted-foreground">
-                  Skill unlocked & mastered
+                <div className="mx-auto h-10 w-10 rounded-xl border border-success/25 bg-background/35 neon-glow-green" />
+                <div className="text-base font-semibold text-foreground font-rajdhani">
+                  Mastered
+                </div>
+                <div className="text-sm text-muted-foreground font-rajdhani">
+                  Skill unlocked and leveled
                 </div>
               </div>
             </div>

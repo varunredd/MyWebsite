@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -16,7 +16,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Clock, Search, BookOpen, Award } from "lucide-react";
+import {
+  Clock,
+  Search,
+  BookOpen,
+  Award,
+  Sparkles,
+  ScrollText,
+} from "lucide-react";
 import { useGameState } from "@/components/GameHUD";
 import { Link } from "react-router-dom";
 import { useUiSounds } from "@/components/UiSounds";
@@ -46,7 +53,7 @@ const blogPosts: BlogPost[] = [
   },
   {
     slug: "from-react-to-production-with-docker-and-nginx",
-    title: "From React to Production with Docker and NGINX",
+    title: "From React to Production with Docker and serving them efficiently with NGINX",
     excerpt:
       "Complete guide to containerizing React applications with Docker and serving them efficiently with NGINX in production environments.",
     date: "2025-08-10",
@@ -69,18 +76,17 @@ const blogPosts: BlogPost[] = [
 ];
 
 export const Blog = () => {
-  const [filteredPosts, setFilteredPosts] = useState(blogPosts);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState("all");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
-  const { trackExploreAction, trackBlogRead } = useGameState();
+  const { trackExploreAction } = useGameState();
   const ui = useUiSounds();
 
   useEffect(() => {
     trackExploreAction("Blog");
   }, [trackExploreAction]);
 
-  useEffect(() => {
+  const filteredPosts = useMemo(() => {
     let filtered = blogPosts;
 
     if (searchQuery) {
@@ -90,89 +96,108 @@ export const Blog = () => {
           post.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
+
     if (selectedTag !== "all") {
       filtered = filtered.filter((post) => post.tags.includes(selectedTag));
     }
+
     if (selectedDifficulty !== "all") {
       filtered = filtered.filter(
         (post) => post.difficulty === selectedDifficulty
       );
     }
-    setFilteredPosts(filtered);
+
+    return filtered;
   }, [searchQuery, selectedTag, selectedDifficulty]);
 
   const allTags = Array.from(new Set(blogPosts.flatMap((post) => post.tags)));
 
-  const getDifficultyColor = (difficulty: string) => {
+  const totalMinutes = blogPosts.reduce(
+    (acc, post) => acc + parseInt(post.readingTime),
+    0
+  );
+
+  const getDifficultyClasses = (difficulty: string) => {
     switch (difficulty) {
       case "Novice":
-        return "bg-green-500/20 text-green-400";
+        return "border-success/30 bg-success/10 text-success";
       case "Adept":
-        return "bg-yellow-500/20 text-yellow-400";
+        return "border-warning/30 bg-warning/10 text-warning";
       case "Master":
-        return "bg-red-500/20 text-red-400";
+        return "border-destructive/30 bg-destructive/10 text-destructive";
       default:
-        return "bg-gray-500/20 text-gray-400";
+        return "border-white/10 bg-background/30 text-muted-foreground";
     }
   };
 
   return (
-    // CHANGED: make page a flex column that fills the viewport
-    <div className="min-h-screen flex flex-col">
-      {/* Hero */}
-      <section className="surface-strong pt-24 pb-12">
-        <div className="container max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <BookOpen className="w-8 h-8 text-primary" />
-              <h1 className="text-4xl md:text-5xl font-bold gradient-text-primary">
+    <div className="min-h-screen">
+      {/* ═══════════ HERO ═══════════ */}
+      <section className="relative overflow-hidden pt-28 sm:pt-32 lg:pt-36 surface-strong">
+        <div className="scanline-overlay" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,245,255,0.08),transparent_38%),radial-gradient(circle_at_bottom,rgba(217,70,239,0.07),transparent_34%)]" />
+
+        <div className="container relative z-10 mx-auto max-w-7xl px-4 py-20 md:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <Badge
+              variant="secondary"
+              className="neon-glow-cyan mb-6 px-5 py-2 text-sm font-rajdhani tracking-wider uppercase"
+              onMouseEnter={() => ui.play("hover")}
+            >
+              <Sparkles className="mr-2 h-4 w-4" />
+              Lore & Tech Archive
+            </Badge>
+
+            <h1 className="mb-6 text-fluid-xl font-orbitron font-bold">
+              <span
+                className="glitch-text gradient-text-primary"
+                data-text="Lore & Tech Codex"
+              >
                 Lore & Tech Codex
-              </h1>
-            </div>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              </span>
+            </h1>
+
+            <p className="mx-auto max-w-3xl text-fluid-md leading-relaxed text-muted-foreground font-rajdhani">
               Embark on knowledge quests through the realms of technology. Each
-              scroll grants experience and unlocks new abilities.
+              scroll grants experience, sharpens engineering instincts, and
+              unlocks new abilities.
             </p>
-            <div className="flex items-center justify-center gap-6 mt-6">
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6">
               <div
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-muted-foreground font-rajdhani"
                 onMouseEnter={() => ui.play("hover")}
               >
-                <Award className="w-5 h-5 text-primary" />
-                <span className="text-sm text-muted-foreground">
-                  {blogPosts.length} Codex Entries
-                </span>
+                <Award className="h-5 w-5 text-primary" />
+                <span>{blogPosts.length} Codex Entries</span>
               </div>
+
               <div
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-muted-foreground font-rajdhani"
                 onMouseEnter={() => ui.play("hover")}
               >
-                <Clock className="w-5 h-5 text-secondary" />
-                <span className="text-sm text-muted-foreground">
-                  {blogPosts.reduce(
-                    (acc, post) => acc + parseInt(post.readingTime),
-                    0
-                  )}{" "}
-                  min total
-                </span>
+                <Clock className="h-5 w-5 text-secondary" />
+                <span>{totalMinutes} min total</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Filters */}
-      <section className="surface py-6">
-        <div className="container max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+      {/* ═══════════ FILTERS ═══════════ */}
+      <section className="relative py-6 surface">
+        <div className="circuit-border absolute left-0 top-0 w-full" />
+
+        <div className="container relative z-10 mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="grid gap-4 lg:grid-cols-[1fr_220px_220px]">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search scrolls..."
+                placeholder="Search entries..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => ui.play("hover")}
-                className="pl-10"
+                className="h-12 border-white/10 bg-background/35 pl-10 font-rajdhani"
               />
             </div>
 
@@ -184,7 +209,7 @@ export const Blog = () => {
               }}
             >
               <SelectTrigger
-                className="w-full sm:w-48"
+                className="h-12 w-full border-white/10 bg-background/35 font-rajdhani"
                 onMouseEnter={() => ui.play("hover")}
               >
                 <SelectValue placeholder="Select category" />
@@ -207,7 +232,7 @@ export const Blog = () => {
               }}
             >
               <SelectTrigger
-                className="w-full sm:w-48"
+                className="h-12 w-full border-white/10 bg-background/35 font-rajdhani"
                 onMouseEnter={() => ui.play("hover")}
               >
                 <SelectValue placeholder="Select difficulty" />
@@ -223,57 +248,62 @@ export const Blog = () => {
         </div>
       </section>
 
-      {/* Posts (fills remaining height) */}
-      <section className="surface py-10 flex-1">
-        <div className="container max-w-7xl mx-auto px-4 md:px-6 lg:px-8 h-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 lg:gap-8">
+      {/* ═══════════ POSTS ═══════════ */}
+      <section className="py-10 surface">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filteredPosts.map((post) => (
               <Card
                 key={post.slug}
-                className="card-game card-surface hover:neon-glow-cyan transition-all duration-300 group h-full flex flex-col focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
+                className="group holo-card card-game card-surface h-full rounded-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
                 onMouseEnter={() => ui.play("cardhover")}
               >
                 <CardHeader className="p-5 md:p-6">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-3 flex items-start justify-between gap-3">
                     <Badge
-                      className={getDifficultyColor(post.difficulty)}
+                      className={`border px-3 py-1 font-rajdhani tracking-wide ${getDifficultyClasses(
+                        post.difficulty
+                      )}`}
                       onMouseEnter={() => ui.play("hover")}
                     >
                       {post.difficulty}
                     </Badge>
+
                     <div
-                      className="flex items-center gap-1 text-primary"
+                      className="flex items-center gap-1.5 text-primary font-rajdhani"
                       onMouseEnter={() => ui.play("hover")}
                     >
-                      <Award className="w-4 h-4" />
+                      <Award className="h-4 w-4" />
                       <span className="text-sm font-medium">
                         {post.xpReward} XP
                       </span>
                     </div>
                   </div>
-                  <CardTitle className="group-hover:gradient-text-primary transition-all duration-300 line-clamp-2">
+
+                  <CardTitle className="min-h-[72px] text-2xl font-orbitron leading-tight text-foreground transition-colors duration-300 group-hover:text-primary">
                     {post.title}
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground line-clamp-3 flex-grow">
+
+                  <CardDescription className="min-h-[112px] pt-2 text-[1.05rem] leading-relaxed text-muted-foreground font-rajdhani">
                     {post.excerpt}
                   </CardDescription>
                 </CardHeader>
 
-                <CardContent className="p-5 md:p-6 pt-0 flex flex-col gap-4 mt-auto">
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <CardContent className="mt-auto flex flex-col gap-4 p-5 pt-0 md:p-6 md:pt-0">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground font-rajdhani">
                     <span>{new Date(post.date).toLocaleDateString()}</span>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="h-4 w-4" />
                       <span>{post.readingTime}</span>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="min-h-[68px] flex flex-wrap content-start gap-2">
                     {post.tags.map((tag) => (
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="text-xs"
+                        className="rounded-full border-white/10 bg-background/30 px-3 py-1 text-xs font-rajdhani tracking-wide"
                         onMouseEnter={() => ui.play("hover")}
                       >
                         {tag}
@@ -288,10 +318,11 @@ export const Blog = () => {
                     className="mt-auto"
                   >
                     <Button
-                      className="w-full hover:neon-glow-cyan transition-all duration-200"
+                      className="w-full font-rajdhani tracking-wider uppercase"
                       variant="outline"
                     >
-                      Begin Quest
+                      <ScrollText className="mr-2 h-4 w-4" />
+                      Read Entry
                     </Button>
                   </Link>
                 </CardContent>
@@ -300,11 +331,17 @@ export const Blog = () => {
           </div>
 
           {filteredPosts.length === 0 && (
-            <div className="text-center py-12">
-              <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No scrolls found</h3>
-              <p className="text-muted-foreground">
-                Try adjusting your search criteria
+            <div className="py-16 text-center">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10 bg-background/35">
+                <BookOpen className="h-10 w-10 text-muted-foreground" />
+              </div>
+
+              <h3 className="mt-6 text-2xl font-orbitron font-semibold text-foreground">
+                No codex entries found
+              </h3>
+
+              <p className="mx-auto mt-3 max-w-md text-muted-foreground font-rajdhani">
+                Try changing the search terms or filters to reveal more scrolls.
               </p>
             </div>
           )}

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useGameState } from "@/components/GameHUD";
 import { useToast } from "@/hooks/use-toast";
 import { useUiSounds } from "@/components/UiSounds";
+import { personal } from "@/data/resumeData";
 import {
   Mail,
   MapPin,
@@ -14,11 +15,37 @@ import {
   Send,
   Github,
   Linkedin,
-  Twitter,
   MessageSquare,
   Zap,
   Shield,
+  Sparkles,
 } from "lucide-react";
+
+const contactAccentStyles = [
+  {
+    wrap: "border-primary/25 bg-primary/10 hover:neon-glow-cyan",
+    icon: "text-primary",
+  },
+  {
+    wrap: "border-secondary/25 bg-secondary/10 hover:neon-glow-purple",
+    icon: "text-secondary",
+  },
+  {
+    wrap: "border-success/25 bg-success/10 hover:neon-glow-green",
+    icon: "text-success",
+  },
+] as const;
+
+const socialAccentStyles = [
+  {
+    wrap: "border-primary/25 bg-primary/10 hover:neon-glow-cyan",
+    icon: "text-primary",
+  },
+  {
+    wrap: "border-secondary/25 bg-secondary/10 hover:neon-glow-purple",
+    icon: "text-secondary",
+  },
+] as const;
 
 export const Contact = () => {
   const { trackExploreAction, trackCriticalAction } = useGameState();
@@ -53,9 +80,9 @@ export const Contact = () => {
       setIsSubmitting(false);
       trackCriticalAction("Contact form submitted");
       toast({
-        title: "Spell Cast Successfully! ⚡",
+        title: "Message Sent! ⚡",
         description:
-          "Your message has been sent through the portal. I'll respond within 24 hours.",
+          "Your message has been sent. I'll respond within 24 hours.",
       });
       setFormData({ name: "", email: "", subject: "", message: "" });
     }, 2000);
@@ -65,23 +92,20 @@ export const Contact = () => {
     {
       icon: Mail,
       label: "Email Portal",
-      value: "varun.reddy.gutha@example.com",
-      href: "mailto:varun.reddy.gutha@example.com",
-      color: "primary",
+      value: personal.email,
+      href: `mailto:${personal.email}`,
     },
     {
       icon: Phone,
       label: "Voice Channel",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
-      color: "secondary",
+      value: personal.phone,
+      href: `tel:${personal.phone.replace(/-/g, "")}`,
     },
     {
       icon: MapPin,
       label: "Location Marker",
-      value: "San Francisco, CA",
+      value: personal.location,
       href: "#",
-      color: "success",
     },
   ];
 
@@ -89,74 +113,75 @@ export const Contact = () => {
     {
       icon: Github,
       label: "GitHub",
-      href: "https://github.com/varunreddy",
-      username: "@varunreddy",
-      color: "primary",
+      href: personal.github,
+      username: personal.githubHandle,
     },
     {
       icon: Linkedin,
       label: "LinkedIn",
-      href: "https://linkedin.com/in/varunreddy",
-      username: "/in/varunreddy",
-      color: "secondary",
-    },
-    {
-      icon: Twitter,
-      label: "Twitter",
-      href: "https://twitter.com/varunreddy",
-      username: "@varunreddy",
-      color: "success",
+      href: personal.linkedin,
+      username: personal.linkedinHandle,
     },
   ];
 
   return (
-    <div className="min-h-screen pt-16">
-      {/* Hero (translucent) */}
-      <section className="surface-strong pt-12 pb-10">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
+    <div className="min-h-screen">
+      {/* ═══════════ HERO ═══════════ */}
+      <section className="relative overflow-hidden pt-28 sm:pt-32 lg:pt-36 surface-strong">
+        <div className="scanline-overlay" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,245,255,0.08),transparent_38%),radial-gradient(circle_at_bottom,rgba(217,70,239,0.07),transparent_34%)]" />
+
+        <div className="container relative z-10 mx-auto px-4 py-20">
+          <div className="mx-auto max-w-4xl text-center">
             <Badge
               variant="secondary"
-              className="neon-glow-purple mb-6 px-4 py-2"
+              className="neon-glow-purple mb-6 px-5 py-2 text-sm font-rajdhani tracking-wider uppercase"
               onMouseEnter={() => ui.play("hover")}
             >
-              <MessageSquare className="w-4 h-4 mr-2" />
+              <MessageSquare className="mr-2 h-4 w-4" />
               Communication Portal Active
             </Badge>
 
-            <h1 className="text-fluid-xl font-bold mb-6">
-              <span className="gradient-text-primary">Open Portal</span>
+            <h1 className="mb-6 text-fluid-xl font-orbitron font-bold">
+              <span
+                className="glitch-text gradient-text-primary"
+                data-text="Open Portal"
+              >
+                Open Portal
+              </span>
             </h1>
 
-            <p className="text-fluid-md text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="mx-auto max-w-3xl text-fluid-md leading-relaxed text-muted-foreground font-rajdhani">
               Ready to embark on a new quest together? Open a communication
-              portal and let's discuss your next digital adventure. Every
-              message earns you XP!
+              portal and let&apos;s discuss your next digital adventure. Every
+              message earns you XP.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Body (translucent) */}
-      <section className="surface py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <Card className="card-game card-surface p-8">
+      {/* ═══════════ BODY ═══════════ */}
+      <section className="relative py-12 surface">
+        <div className="circuit-border absolute left-0 top-0 w-full" />
+
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+            {/* Form */}
+            <Card className="holo-card card-game card-surface rounded-2xl p-7 sm:p-8">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold gradient-text-primary mb-2">
+                <h2 className="mb-2 text-2xl sm:text-3xl font-orbitron font-bold gradient-text-primary">
                   Cast Your Message Spell
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="text-[1.05rem] leading-relaxed text-muted-foreground font-rajdhani">
                   Fill out the form below to send your message through the
                   portal.
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
+                    <label className="text-sm uppercase tracking-wider text-foreground font-rajdhani">
                       Your Name
                     </label>
                     <Input
@@ -166,11 +191,12 @@ export const Contact = () => {
                       onChange={handleInputChange}
                       onFocus={() => ui.play("hover")}
                       required
-                      className="card-surface border-card-border"
+                      className="h-12 border-white/10 bg-background/35 font-rajdhani"
                     />
                   </div>
+
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
+                    <label className="text-sm uppercase tracking-wider text-foreground font-rajdhani">
                       Email Address
                     </label>
                     <Input
@@ -181,28 +207,28 @@ export const Contact = () => {
                       onChange={handleInputChange}
                       onFocus={() => ui.play("hover")}
                       required
-                      className="card-surface border-card-border"
+                      className="h-12 border-white/10 bg-background/35 font-rajdhani"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
+                  <label className="text-sm uppercase tracking-wider text-foreground font-rajdhani">
                     Subject
                   </label>
                   <Input
                     name="subject"
-                    placeholder="What's this quest about?"
+                    placeholder="What&apos;s this quest about?"
                     value={formData.subject}
                     onChange={handleInputChange}
                     onFocus={() => ui.play("hover")}
                     required
-                    className="card-surface border-card-border"
+                    className="h-12 border-white/10 bg-background/35 font-rajdhani"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
+                  <label className="text-sm uppercase tracking-wider text-foreground font-rajdhani">
                     Message
                   </label>
                   <Textarea
@@ -212,26 +238,26 @@ export const Contact = () => {
                     onChange={handleInputChange}
                     onFocus={() => ui.play("hover")}
                     required
-                    rows={6}
-                    className="card-surface border-card-border resize-none"
+                    rows={7}
+                    className="min-h-[180px] resize-none border-white/10 bg-background/35 font-rajdhani"
                   />
                 </div>
 
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full neon-glow-cyan"
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-rajdhani tracking-wider uppercase shadow-[0_0_22px_hsl(var(--primary)/0.30)]"
                   disabled={isSubmitting}
                   onMouseEnter={() => ui.play("hover")}
                 >
                   {isSubmitting ? (
                     <>
-                      <Shield className="w-5 h-5 mr-2 animate-spin" />
+                      <Shield className="mr-2 h-5 w-5 animate-spin" />
                       Casting Spell...
                     </>
                   ) : (
                     <>
-                      <Send className="w-5 h-5 mr-2" />
+                      <Send className="mr-2 h-5 w-5" />
                       Send Message (+100 XP)
                     </>
                   )}
@@ -240,99 +266,111 @@ export const Contact = () => {
                 <div className="text-center">
                   <Badge
                     variant="outline"
-                    className="text-xs"
+                    className="border-white/10 bg-background/30 px-3 py-1 text-xs font-rajdhani tracking-wide"
                     onMouseEnter={() => ui.play("hover")}
                   >
-                    <Zap className="w-3 h-3 mr-1" />
-                    Sending a message grants 100 XP and the "Message Caster"
-                    badge
+                    <Zap className="mr-1.5 h-3 w-3" />
+                    Sending a message grants 100 XP and the Message Caster badge
                   </Badge>
                 </div>
               </form>
             </Card>
 
-            {/* Contact Info & Social */}
+            {/* Info column */}
             <div className="space-y-8">
-              {/* Contact Information */}
-              <Card className="card-game card-surface p-6">
-                <h3 className="text-xl font-semibold gradient-text-secondary mb-6">
+              <Card className="holo-card card-game card-surface rounded-2xl p-6 sm:p-7">
+                <h3 className="mb-6 text-2xl font-orbitron font-semibold gradient-text-secondary">
                   Alternative Portals
                 </h3>
 
                 <div className="space-y-3">
-                  {contactInfo.map((info, index) => (
-                    <a
-                      key={index}
-                      href={info.href}
-                      className="flex items-center gap-4 p-4 rounded-lg card-surface hover:neon-glow-cyan transition"
-                      onMouseEnter={() => ui.play("cardhover")}
-                      onClick={() => ui.play("nav")}
-                    >
-                      <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center neon-glow-${info.color} group-hover:scale-110 transition-transform`}
+                  {contactInfo.map((info, index) => {
+                    const Icon = info.icon;
+                    const accent =
+                      contactAccentStyles[index % contactAccentStyles.length];
+
+                    return (
+                      <a
+                        key={index}
+                        href={info.href}
+                        className="flex items-center gap-4 rounded-xl border border-white/6 bg-background/20 p-4 transition-all duration-300 hover:bg-background/35"
+                        onMouseEnter={() => ui.play("cardhover")}
+                        onClick={() => ui.play("nav")}
                       >
-                        <info.icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-muted-foreground">
-                          {info.label}
+                        <div
+                          className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-all duration-300 ${accent.wrap}`}
+                        >
+                          <Icon className={`h-5 w-5 ${accent.icon}`} />
                         </div>
-                        <div className="font-medium text-foreground">
-                          {info.value}
+
+                        <div>
+                          <div className="text-sm text-muted-foreground font-rajdhani">
+                            {info.label}
+                          </div>
+                          <div className="text-lg font-semibold text-foreground font-rajdhani">
+                            {info.value}
+                          </div>
                         </div>
-                      </div>
-                    </a>
-                  ))}
+                      </a>
+                    );
+                  })}
                 </div>
               </Card>
 
-              {/* Social Links */}
-              <Card className="card-game card-surface p-6">
-                <h3 className="text-xl font-semibold gradient-text-primary mb-6">
+              <Card className="holo-card card-game card-surface rounded-2xl p-6 sm:p-7">
+                <h3 className="mb-6 text-2xl font-orbitron font-semibold gradient-text-primary">
                   Social Channels
                 </h3>
 
                 <div className="space-y-3">
-                  {socialLinks.map((social, index) => (
-                    <a
-                      key={index}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-4 p-4 rounded-lg card-surface hover:neon-glow-cyan transition"
-                      onMouseEnter={() => ui.play("cardhover")}
-                      onClick={() => ui.play("nav")}
-                    >
-                      <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center neon-glow-${social.color} group-hover:scale-110 transition-transform`}
+                  {socialLinks.map((social, index) => {
+                    const Icon = social.icon;
+                    const accent =
+                      socialAccentStyles[index % socialAccentStyles.length];
+
+                    return (
+                      <a
+                        key={index}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-4 rounded-xl border border-white/6 bg-background/20 p-4 transition-all duration-300 hover:bg-background/35"
+                        onMouseEnter={() => ui.play("cardhover")}
+                        onClick={() => ui.play("nav")}
                       >
-                        <social.icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-foreground">
-                          {social.label}
+                        <div
+                          className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-all duration-300 ${accent.wrap}`}
+                        >
+                          <Icon className={`h-5 w-5 ${accent.icon}`} />
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          {social.username}
+
+                        <div>
+                          <div className="text-lg font-semibold text-foreground font-rajdhani">
+                            {social.label}
+                          </div>
+                          <div className="text-sm text-muted-foreground font-rajdhani">
+                            {social.username}
+                          </div>
                         </div>
-                      </div>
-                    </a>
-                  ))}
+                      </a>
+                    );
+                  })}
                 </div>
               </Card>
 
-              {/* Response Time */}
               <Card
-                className="card-game card-surface p-6 text-center"
+                className="holo-card card-game card-surface rounded-2xl p-7 text-center"
                 onMouseEnter={() => ui.play("cardhover")}
               >
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full neon-glow-green flex items-center justify-center">
-                  <MessageSquare className="w-8 h-8 text-success" />
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-success/25 bg-success/10 neon-glow-green">
+                  <MessageSquare className="h-8 w-8 text-success" />
                 </div>
-                <h4 className="text-lg font-semibold text-foreground mb-2">
+
+                <h4 className="mb-3 text-2xl font-orbitron font-semibold text-foreground">
                   Quick Response Guaranteed
                 </h4>
-                <p className="text-sm text-muted-foreground">
+
+                <p className="mx-auto max-w-md text-[1.02rem] leading-relaxed text-muted-foreground font-rajdhani">
                   I typically respond within 24 hours. For urgent matters, feel
                   free to reach out via phone or LinkedIn.
                 </p>

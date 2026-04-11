@@ -21,6 +21,8 @@ export default {
 			fontFamily: {
 				inter: ['Inter', 'sans-serif'],
 				mono: ['JetBrains Mono', 'monospace'],
+				orbitron: ['Orbitron', 'sans-serif'],
+				rajdhani: ['Rajdhani', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
