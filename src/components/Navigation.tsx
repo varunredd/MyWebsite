@@ -150,8 +150,10 @@ export const Navigation = () => {
   return (
     <>
       {/* Desktop Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-40 border-b border-card-border bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 h-16 flex items-center gap-6">
+      <header className="fixed inset-x-0 top-3 sm:top-4 z-40 px-3 sm:px-4 lg:px-6">
+        <div
+          className="mx-auto flex h-16 w-full max-w-[1500px] items-center gap-4 rounded-[24px] border border-white/10 bg-background/70 px-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-2xl sm:px-5 lg:px-6"
+        >
           {/* Logo (left) */}
           <button
             onMouseEnter={ui.hover}
@@ -164,7 +166,7 @@ export const Navigation = () => {
           </button>
 
           {/* Desktop Navigation (center) */}
-          <NavItems className="flex-1 justify-center gap-8" />
+          <NavItems className="flex-1 justify-center gap-4 xl:gap-6" />
 
           {/* Right controls (right) */}
           <div className="flex items-center gap-2">
@@ -181,7 +183,7 @@ export const Navigation = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="lg:hidden"
+                  className="lg:hidden rounded-xl"
                   onMouseEnter={ui.hover}
                 >
                   <Menu className="w-5 h-5" />
@@ -225,7 +227,7 @@ export const Navigation = () => {
       </header>
 
       {/* Mobile Bottom Navigation (very small screens) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden border-t border-card-border bg-background/90 backdrop-blur-xl sm:hidden">
+      <div className="fixed bottom-3 left-3 right-3 z-40 rounded-2xl border border-white/10 bg-background/80 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-2xl lg:hidden sm:hidden">
         <div className="flex items-center justify-around py-2">
           {navItems.slice(0, 6).map((item) => (
             <button
