@@ -232,14 +232,14 @@ export const GameHUD = () => {
     level >= MAX_LEVEL ? 100 : (currentLevelXP / XP_TO_NEXT) * 100;
 
   return (
-    <div className="fixed top-3 right-3 z-50 sm:top-4 sm:right-4">
+    <div className="fixed top-20 right-3 z-30 sm:right-4">
       <div
         className="
-          min-w-[220px] rounded-xl
+          min-w-[180px] rounded-xl
           border border-card-border/40
-          bg-background/0.0000000000005 backdrop-blur-lg
+          bg-background/80 backdrop-blur-lg
           shadow-[0_8px_30px_rgba(0,0,0,.20)]
-          px-4 py-3 sm:px-5 sm:py-4 space-y-2.5
+          px-3 py-2.5 space-y-2
         "
       >
         {/* Header */}

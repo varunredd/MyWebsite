@@ -7,21 +7,18 @@ import { useToast } from "@/hooks/use-toast";
 import { navigateTo } from "@/utils/navigation";
 import { useUiSounds } from "@/components/UiSounds";
 import { LiquidButton } from "@/components/ui/LiquidButton";
+import { personal, stats, quickLinks } from "@/data/resumeData";
 
 import {
   Download,
   Mail,
   Github,
   Linkedin,
-  Twitter,
   ArrowDown,
   Play,
   Sparkles,
 } from "lucide-react";
 import { MapPin, Calendar, Shield } from "lucide-react";
-
-// particles toggle
-const SHOW_PARTICLES = false;
 
 function BadgePill({
   icon,
@@ -87,7 +84,7 @@ export const Home = () => {
     ui.play("click");
     trackCriticalAction("Resume download");
     const link = document.createElement("a");
-    link.href = "/assets/Varun_Reddy_Gutha_Resume.pdf";
+    link.href = personal.resumePath;
     link.download = "Varun_Reddy_Gutha_Resume.pdf";
     link.rel = "noopener noreferrer";
     document.body.appendChild(link);
@@ -109,32 +106,11 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section (no local video; global fixed video runs from App.tsx) */}
+      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Optional particles */}
-        {SHOW_PARTICLES && (
-          <div
-            className="absolute inset-0 overflow-hidden pointer-events-none"
-            aria-hidden
-          >
-            {[...Array(20)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 bg-primary/30 rounded-full float-animation"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 3}s`,
-                  animationDuration: `${3 + Math.random() * 2}s`,
-                }}
-              />
-            ))}
-          </div>
-        )}
-
         {/* Hero Content */}
         <div className="relative z-10 container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="max-w-4xl mx-auto space-y-6">
             {/* Badge */}
             <div className="flex justify-center">
               <Badge
@@ -143,33 +119,32 @@ export const Home = () => {
                 onMouseEnter={() => ui.play("hover")}
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                Available for New Quests
+                {personal.availability}
               </Badge>
             </div>
 
             {/* Main Heading */}
             <div className="space-y-4">
               <h1 className="text-fluid-xl font-bold leading-tight">
-                <span className="gradient-text-primary">Varun Reddy Gutha</span>
+                <span className="gradient-text-primary">{personal.name}</span>
                 <br />
                 <span className="text-foreground text-shadow-glow">
-                  Full-Stack Developer & Digital Architect
+                  {personal.title}
                 </span>
               </h1>
 
               <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-                <BadgePill icon="map-pin" label="Charlotte, NC" />
+                <BadgePill icon="map-pin" label={personal.location} />
                 <BadgePill
                   icon="calendar"
-                  label="Internship Jan 2026 (OPT)"
+                  label={personal.availability}
                   emphasis
                 />
-                <BadgePill icon="shield" label="F-1 Visa (OPT-eligible)" />
+                <BadgePill icon="shield" label={personal.visa} />
               </div>
 
               <p className="text-fluid-md text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                I build software people use full-stack websites, mobile
-                applications, and applied AI/ML systems.
+                {personal.tagline}
               </p>
             </div>
 
@@ -177,7 +152,7 @@ export const Home = () => {
             <div className="flex flex-wrap justify-center gap-8 text-center">
               <div className="space-y-1">
                 <div className="text-2xl font-bold gradient-text-primary">
-                  2+
+                  {stats.yearsExperience}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Years Experience
@@ -185,16 +160,18 @@ export const Home = () => {
               </div>
               <div className="space-y-1">
                 <div className="text-2xl font-bold gradient-text-secondary">
-                  10+
+                  {stats.projects}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Projects Completed
+                  Projects Built
                 </div>
               </div>
               <div className="space-y-1">
-                <div className="text-2xl font-bold text-success">15+</div>
+                <div className="text-2xl font-bold text-success">
+                  {stats.technologies}
+                </div>
                 <div className="text-sm text-muted-foreground">
-                  Technologies Mastered
+                  Technologies Used
                 </div>
               </div>
             </div>
@@ -206,10 +183,10 @@ export const Home = () => {
                 className="px-8"
                 onClick={handleStartJourney}
                 onMouseEnter={() => ui.play("hover")}
-                ariaLabel="Start your development journey"
+                ariaLabel="Explore my work"
               >
                 <Play className="w-5 h-5" />
-                <span>Start Journey</span>
+                <span>Explore Work</span>
               </LiquidButton>
 
               <LiquidButton
@@ -217,10 +194,10 @@ export const Home = () => {
                 className="px-8"
                 onClick={handleOpenPortal}
                 onMouseEnter={() => ui.play("hover")}
-                ariaLabel="Open contact portal"
+                ariaLabel="Contact me"
               >
                 <Mail className="w-5 h-5" />
-                <span>Open Portal</span>
+                <span>Contact Me</span>
               </LiquidButton>
 
               <LiquidButton
@@ -228,91 +205,79 @@ export const Home = () => {
                 className="px-8"
                 onClick={handleDownloadArtifact}
                 onMouseEnter={() => ui.play("hover")}
-                ariaLabel="Download resume artifact"
+                ariaLabel="Download resume"
               >
                 <Download className="w-5 h-5" />
-                <span>Download Artifact</span>
+                <span>Download Resume</span>
               </LiquidButton>
             </div>
 
-            {/* Social Links */}
-            <div className="flex justify-center gap-4 pt-4">
-              {[
-                { icon: Github, href: "#", label: "GitHub" },
-                { icon: Linkedin, href: "#", label: "LinkedIn" },
-                { icon: Twitter, href: "#", label: "Twitter" },
-              ].map(({ icon: Icon, href, label }) => (
-                <Button
-                  key={label}
-                  variant="ghost"
-                  size="sm"
-                  className="w-10 h-10 p-0 hover:neon-glow-cyan"
-                  asChild
-                  onMouseEnter={() => ui.play("hover")}
-                  onClick={() => ui.play("click")}
-                >
-                  <a href={href} target="_blank" rel="noopener noreferrer">
-                    <Icon className="w-5 h-5" />
-                    <span className="sr-only">{label}</span>
-                  </a>
-                </Button>
-              ))}
+            {/* Social Links + Scroll Arrow — grouped together, properly spaced */}
+            <div className="flex flex-col items-center gap-6 pt-4">
+              {/* Social Icons */}
+              <div className="flex justify-center gap-4">
+                {[
+                  {
+                    icon: Github,
+                    href: personal.github,
+                    label: "GitHub",
+                  },
+                  {
+                    icon: Linkedin,
+                    href: personal.linkedin,
+                    label: "LinkedIn",
+                  },
+                ].map(({ icon: Icon, href, label }) => (
+                  <Button
+                    key={label}
+                    variant="ghost"
+                    size="sm"
+                    className="w-10 h-10 p-0 hover:neon-glow-cyan"
+                    asChild
+                    onMouseEnter={() => ui.play("hover")}
+                    onClick={() => ui.play("click")}
+                  >
+                    <a href={href} target="_blank" rel="noopener noreferrer">
+                      <Icon className="w-5 h-5" />
+                      <span className="sr-only">{label}</span>
+                    </a>
+                  </Button>
+                ))}
+              </div>
+
+              {/* Scroll Arrow — directly below social icons, not absolute positioned */}
+              <button
+                className="animate-bounce hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+                onClick={() => {
+                  ui.play("click");
+                  scrollToQuests();
+                }}
+                onMouseEnter={() => ui.play("hover")}
+                aria-label="Scroll down"
+              >
+                <ArrowDown className="w-6 h-6 text-primary" />
+              </button>
             </div>
           </div>
         </div>
-
-        {/* Scroll Indicator */}
-        <button
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-          onClick={() => {
-            ui.play("click");
-            scrollToQuests();
-          }}
-          onMouseEnter={() => ui.play("hover")}
-          aria-label="Scroll to quests"
-        >
-          <ArrowDown className="w-6 h-6 text-primary" />
-        </button>
       </section>
 
-      {/* Quick Preview Section (translucent over global video) */}
+      {/* Quick Preview Section */}
       <section id="quests" className="py-20 surface">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold mb-4 gradient-text-primary">
-                Ready to Embark on Your Next Quest?
+                What I Do
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore my journey, discover completed quests, and learn about
-                the technologies that power modern digital experiences.
+                Backend systems, AI/ML pipelines, and full-stack web
+                applications — built to scale, tested to ship.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Origin Story",
-                  description:
-                    "Discover my background, education, and the journey that led me to become a full-stack developer.",
-                  href: "/about",
-                  color: "primary",
-                },
-                {
-                  title: "Completed Quests",
-                  description:
-                    "Explore my portfolio of projects, from e-commerce platforms to AI-powered applications.",
-                  href: "/projects",
-                  color: "secondary",
-                },
-                {
-                  title: "Skill Tree",
-                  description:
-                    "Navigate through my technical skills and see my proficiency levels across different technologies.",
-                  href: "/skills",
-                  color: "success",
-                },
-              ].map((item, index) => (
+              {quickLinks.map((item, index) => (
                 <div
                   key={index}
                   className="card-game card-surface p-6 rounded-lg hover:scale-105 transition-transform duration-200"
@@ -320,9 +285,9 @@ export const Home = () => {
                 >
                   <h3
                     className={`text-xl font-semibold mb-3 ${
-                      item.color === "primary"
+                      index === 0
                         ? "gradient-text-primary"
-                        : item.color === "secondary"
+                        : index === 1
                         ? "gradient-text-secondary"
                         : "text-success"
                     }`}
